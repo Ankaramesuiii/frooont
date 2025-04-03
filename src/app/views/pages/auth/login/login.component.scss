@@ -1,0 +1,15 @@
+:host {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alert-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050; /* Ensures it's above other elements */
+  width: auto;
+  max-width: 400px;
+}

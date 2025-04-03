@@ -1,0 +1,28 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink=".">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+      Import from Intern Apps
+    </li>
+  </ol>
+</nav>
+<div class="container">
+  <input type="file" (change)="uploadFile($event)" class="form-control mb-3" />
+  @if(errorMessage){
+  <div class="text-danger mb-2">{{ errorMessage }}</div>
+  }
+  <button class="btn btn-primary" [disabled]="isLoading" (click)="submitFile()">
+    Import CSV
+  </button>
+</div>
+@if(isLoading) {
+  <div class="splash-screen2">
+    <div class="logo"></div> <!-- Logo centré -->
+    <div class="spinner">
+      <span class="dots"></span>
+    </div>
+    <div class="message">
+      <span id="loadingText">{{ currentMessage }}</span>
+    </div>
+  </div>
+}
