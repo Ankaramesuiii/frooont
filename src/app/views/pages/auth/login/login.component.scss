@@ -13,3 +13,10 @@
   width: auto;
   max-width: 400px;
 }
+.card {
+  height: 100% !important;
+  min-height: 500px !important; // or whatever you want
+}
+.row {
+  height: 100% !important;
+}
