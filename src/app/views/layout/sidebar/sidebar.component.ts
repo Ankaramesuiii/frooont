@@ -9,6 +9,8 @@ import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 
 import { FeatherIconDirective } from '../../../core/feather-icon/feather-icon.directive';
+import { CalenderTrainingService } from '../../../core/services/calender-training/calender-training.service';
+import { Training } from '../../../core/models/training.model';
 
 @Component({
   selector: 'app-sidebar',
@@ -30,7 +32,8 @@ export class SidebarComponent implements OnInit, AfterViewInit {
   menuItems: MenuItem[] = [];
   @ViewChild('sidebarMenu') sidebarMenu: ElementRef;
 
-  constructor(@Inject(DOCUMENT) private document: Document, private renderer: Renderer2, router: Router) { 
+  constructor(@Inject(DOCUMENT) private document: Document, private renderer: Renderer2, router: Router,
+  private trainingService: CalenderTrainingService){
     router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
 
@@ -51,6 +54,7 @@ export class SidebarComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.loadMenu();
     this.menuItems = MENU;
 
     /**
@@ -237,6 +241,23 @@ export class SidebarComponent implements OnInit, AfterViewInit {
         }
     }
   };
-
+  loadMenu(): void {
+    this.trainingService.getTraining().subscribe((res: any) => {
+      const hasTodayTraining = res.training.some((t: Training) => {
+        const today = new Date().toISOString().slice(0, 10);
+        return t.startDate?.slice(0, 10) === today;
+      });
+      this.menuItems = MENU.map((item) => {
+        if (item.label === 'Calendrier') {
+          return {
+            ...item,
+            badge: hasTodayTraining ? { variant: 'primary', text: 'Event' } : undefined
+          };
+        }
+        return item;
+      });
+    });
 
 }
+}
+

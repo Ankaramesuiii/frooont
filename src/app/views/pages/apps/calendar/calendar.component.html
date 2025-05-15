@@ -1,29 +1,24 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink=".">General</a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+      Calendrier
+    </li>
+  </ol>
+</nav>
 <div class="row">
   <div class="col-md-12">
     <div class="row">
       <div class="col-12 grid-margin">
         <div class="card">
-          <div class="card-body">
+          <div class="card-body full-calendar-container">
             <full-calendar
               [options]='calendarOptions'
             ></full-calendar>
           </div>
           </div>
       </div>
-      <div class="col-12 d-none d-md-block">
-        <div class="card">
-          <div class="card-body">
-            <h6 class="mb-2 text-secondary">Draggable Events</h6>
-            <div class='d-flex' #externalEvents>
-              <div class='fc-event' [ngStyle]="{'background-color': 'rgba(253,126,20,.25)', 'border-color': '#fd7e14'}" [attr.bgColor]="'rgba(253,126,20,.25)'" [attr.bdcolor]="'#fd7e14'">Birth Day</div>
-              <div class='fc-event' [ngStyle]="{'background-color': 'rgba(241,0,117,.25)', 'border-color': '#f10075'}" [attr.bgColor]="'rgba(241,0,117,.25)'" [attr.bdColor]="'#f10075'">New Project</div>
-              <div class='fc-event' [ngStyle]="{'background-color': 'rgba(0,204,204,.25)', 'border-color': '#00cccc'}" [attr.bgColor]="'rgba(0,204,204,.25)'" [attr.bdColor]="'#00cccc'">Anniversary</div>
-              <div class='fc-event' [ngStyle]="{'background-color': 'rgb(18,182,89,.25)', 'border-color': '#10b759'}" [attr.bgColor]="'rgb(18,182,89,.25)'" [attr.bdColor]="'#10b759'">Clent Meeting</div>
-              <div class='fc-event' [ngStyle]="{'background-color': 'rgba(91,71,251,.2)', 'border-color': '#5b47fb'}" [attr.bgColor]="'rgba(91,71,251,.2)'" [attr.bdColor]="'#5b47fb'">Office Trip</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   </div>
 </div>

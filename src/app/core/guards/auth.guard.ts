@@ -15,7 +15,7 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
 
   const requiredRoles: string[] = route.data['roles'];
   
-  
+    
   // If no roles specified, allow access
   if (!requiredRoles || requiredRoles.length === 0) {
     return true;
@@ -30,13 +30,6 @@ export const authGuard: CanActivateFn = (route: ActivatedRouteSnapshot, state: R
     return false;
   }
 
-  if (authService.isAuthenticated()) {
-    return true; // Token is valid, proceed to route
-  } else {
-    // If token is expired or not available, show expiry message and log out
-    authService.showExpiryMessage(); 
-    return false; // Prevent access to the route
-  }
 
   return true;
 };

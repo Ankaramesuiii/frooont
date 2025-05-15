@@ -1,0 +1,429 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink=".">General</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Voyages</li>
+  </ol>
+</nav>
+<div class="flight-search-container">
+  <div class="search-frame">
+    <h1>Recherche de Vols</h1>
+
+    <div class="search-form">
+      <form (submit)="searchFlights(); $event.preventDefault()">
+        <div class="form-row">
+          <!-- Departure Airport -->
+          <div class="form-group">
+            <label for="departureId">Aéroport de Départ</label>
+            <div class="autocomplete-container">
+              <input
+                type="text"
+                id="departureId"
+                [(ngModel)]="searchParams.departureId"
+                name="departureId"
+                placeholder="ex: CDG"
+                required
+                (keyup)="onSearch(searchParams.departureId, 'departure')"
+              />
+              <!-- Suggestions dropdown -->
+              <ul
+                *ngIf="departureSuggestions.length > 0"
+                class="autocomplete-list"
+              >
+                <li
+                  *ngFor="let location of departureSuggestions"
+                  (click)="onSelectLocation(location, 'departure')"
+                  class="autocomplete-item"
+                >
+                  {{ location.name }} ({{ location.iataCode }})
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Arrival Airport -->
+          <div class="form-group">
+            <label for="arrivalId">Aéroport d'Arrivée</label>
+            <div class="autocomplete-container">
+              <input
+                type="text"
+                id="arrivalId"
+                [(ngModel)]="searchParams.arrivalId"
+                name="arrivalId"
+                placeholder="ex: TUN"
+                required
+                (keyup)="onSearch(searchParams.arrivalId, 'arrival')"
+              />
+              <!-- Suggestions dropdown -->
+              <ul
+                *ngIf="arrivalSuggestions.length > 0"
+                class="autocomplete-list"
+              >
+                <li
+                  *ngFor="let location of arrivalSuggestions"
+                  (click)="onSelectLocation(location, 'arrival')"
+                  class="autocomplete-item"
+                >
+                  {{ location.name }} ({{ location.iataCode }})
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="outboundDate">Date d'Aller</label>
+            <input
+              type="date"
+              id="outboundDate"
+              [(ngModel)]="searchParams.outboundDate"
+              name="outboundDate"
+              required
+            />
+          </div>
+
+          <div class="form-group" *ngIf="!isOneWay">
+            <label for="returnDate">Date de Retour</label>
+            <input
+              type="date"
+              id="returnDate"
+              [(ngModel)]="searchParams.returnDate"
+              name="returnDate"
+              [min]="searchParams.outboundDate"
+            />
+          </div>
+
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              id="oneWay"
+              [(ngModel)]="isOneWay"
+              name="oneWay"
+              (change)="onOneWayChange()"
+            />
+            <label for="oneWay">Aller simple</label>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="teamMember">Passager</label>
+            <ng-select
+              [multiple]="true"
+              [(ngModel)]="selectTeamMembers"
+              [placeholder]="'Sélectionner des passagers'"
+              name="adults"
+            >
+              @for (tm of teamMembers; track tm) {
+              <ng-option [value]="tm">{{ tm?.name }}</ng-option>
+              }
+              <ng-option value="custom">Custom</ng-option>
+            </ng-select>
+          </div>
+        </div>
+        <button type="submit" class="search-button" [disabled]="loading">
+          <span *ngIf="!loading">Rechercher des vols</span>
+          <span *ngIf="loading">Recherche en cours...</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>Chargement des données de vol...</p>
+    </div>
+  </div>
+
+  <div class="loading-overlay" *ngIf="loadingAirports">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>Chargement des aéroports...</p>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    <div class="error-content">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <div class="error-text">
+        <h3>Erreur de Recherche</h3>
+        <p>{{ error }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Affichage des vols aller simple -->
+  <div class="flight-results" *ngIf="flights.length > 0 && isOneWay">
+    <h2>Vols Disponibles</h2>
+
+    <div class="flight-card" *ngFor="let flight of flights">
+      <div class="flight-header">
+        <div class="price">{{ flight.price | currency : "TND" }}</div>
+        <div class="airline">
+          <img
+            [src]="flight.airline_logo"
+            *ngIf="flight.airline_logo"
+            class="airline-logo"
+          />
+          {{ flight.flights[0].airline }}
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="flight-details">
+        <div
+          class="segment"
+          *ngFor="let segment of flight.flights; let i = index"
+        >
+          <div class="segment-header">
+            <span *ngIf="i > 0">Correspondance {{ i }}</span>
+            <span class="duration">{{ formatDuration(segment.duration) }}</span>
+          </div>
+
+          <div class="segment-details">
+            <div class="route">
+              <span class="city">{{ segment.departure_airport.id }}</span>
+              <span class="time">{{
+                formatTime(segment.departure_airport.time)
+              }}</span>
+              →
+              <span class="city">{{ segment.arrival_airport.id }}</span>
+              <span class="time">{{
+                formatTime(segment.arrival_airport.time)
+              }}</span>
+            </div>
+            <div class="flight-info">
+              <span>{{ segment.airline }} {{ segment.flight_number }}</span>
+              <span>{{ segment.airplane }}</span>
+              <span *ngIf="segment.legroom">({{ segment.legroom }})</span>
+            </div>
+            <div class="extensions" *ngIf="segment.extensions?.length">
+              <div class="extension-tag" *ngFor="let ext of segment.extensions">
+                {{ ext }}
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="layover"
+            *ngIf="i < flight.flights.length - 1 && flight.layovers"
+          >
+            <div class="layover-details">
+              <span
+                >⏱️ Escale à {{ flight.layovers[i].name }} ({{
+                  flight.layovers[i].id
+                }})</span
+              >
+              <span>{{ formatDuration(flight.layovers[i].duration) }}</span>
+              <span *ngIf="flight.layovers[i].overnight" class="overnight"
+                >(Nuit)</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="total-duration">
+          Durée totale : {{ formatDuration(flight.total_duration) }}
+        </div>
+      </div>
+
+      <div class="flight-extensions" *ngIf="flight.extensions?.length">
+        <div class="extension" *ngFor="let ext of flight.extensions">
+          ℹ️ {{ ext }}
+        </div>
+      </div>
+      <div class="flight-footer">
+        <button class="select-button" (click)="selectFlight(flight)">
+          Sélectionner
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Affichage des vols aller-retour -->
+  <div class="flight-results" *ngIf="combinedFlights.length > 0 && !isOneWay">
+    <h2>Vols Aller-Retour Disponibles</h2>
+{{combinedFlights.length}}
+    <div class="round-trip-card" *ngFor="let trip of combinedFlights">
+      <div class="trip-header">
+        <div class="total-price">
+          {{ trip.totalPrice | currency : "TND" }}
+        </div>
+        <div class="trip-summary">
+          <div class="airline">
+            <img
+              [src]="trip.outbound.airline_logo"
+              *ngIf="trip.outbound.airline_logo"
+              class="airline-logo"
+            />
+            {{ trip.outbound.flights[0].airline }}
+          </div>
+          /
+          <div class="airline">
+            <img
+              [src]="trip.return.airline_logo"
+              *ngIf="trip.return.airline_logo"
+              class="airline-logo"
+            />
+            {{ trip.return.flights[0].airline }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Vol aller -->
+      <div class="flight-section outbound">
+        <h3>Vol Aller</h3>
+        <div class="flight-details">
+          <div
+            class="segment"
+            *ngFor="let segment of trip.outbound.flights; let i = index"
+          >
+            <div class="segment-header">
+              <span *ngIf="i > 0">Correspondance {{ i }}</span>
+              <span class="duration">{{
+                formatDuration(segment.duration)
+              }}</span>
+            </div>
+
+            <div class="segment-details">
+              <div class="route">
+                <span class="city">{{ segment.departure_airport.id }}</span>
+                <span class="time">{{
+                  formatTime(segment.departure_airport.time)
+                }}</span>
+                →
+                <span class="city">{{ segment.arrival_airport.id }}</span>
+                <span class="time">{{
+                  formatTime(segment.arrival_airport.time)
+                }}</span>
+              </div>
+              <div class="flight-info">
+                <span>{{ segment.airline }} {{ segment.flight_number }}</span>
+                <span>{{ segment.airplane }}</span>
+                <span *ngIf="segment.legroom">({{ segment.legroom }})</span>
+              </div>
+            </div>
+
+            <div
+              class="layover"
+              *ngIf="
+                i < trip.outbound.flights.length - 1 && trip.outbound.layovers
+              "
+            >
+              <div class="layover-details">
+                <span
+                  >⏱️ Escale à {{ trip.outbound.layovers[i].name }} ({{
+                    trip.outbound.layovers[i].id
+                  }})</span
+                >
+                <span>{{
+                  formatDuration(trip.outbound.layovers[i].duration)
+                }}</span>
+                <span
+                  *ngIf="trip.outbound.layovers[i].overnight"
+                  class="overnight"
+                  >(Nuit)</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="total-duration">
+            Durée totale : {{ formatDuration(trip.outbound.total_duration) }}
+          </div>
+        </div>
+
+        <div class="flight-extensions" *ngIf="trip.outbound.extensions?.length">
+          <div class="extension" *ngFor="let ext of trip.outbound.extensions">
+            🛈 {{ ext }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Vol retour -->
+      <div class="flight-section return">
+        <h3>Vol Retour</h3>
+        <div class="flight-details">
+          <div
+            class="segment"
+            *ngFor="let segment of trip.return.flights; let i = index"
+          >
+            <div class="segment-header">
+              <span *ngIf="i > 0">Correspondance {{ i }}</span>
+              <span class="duration">{{
+                formatDuration(segment.duration)
+              }}</span>
+            </div>
+
+            <div class="segment-details">
+              <div class="route">
+                <span class="city">{{ segment.departure_airport.id }}</span>
+                <span class="time">{{
+                  formatTime(segment.departure_airport.time)
+                }}</span>
+                →
+                <span class="city">{{ segment.arrival_airport.id }}</span>
+                <span class="time">{{
+                  formatTime(segment.arrival_airport.time)
+                }}</span>
+              </div>
+              <div class="flight-info">
+                <span>{{ segment.airline }} {{ segment.flight_number }}</span>
+                <span>{{ segment.airplane }}</span>
+                <span *ngIf="segment.legroom">({{ segment.legroom }})</span>
+              </div>
+            </div>
+
+            <div
+              class="layover"
+              *ngIf="i < trip.return.flights.length - 1 && trip.return.layovers"
+            >
+              <div class="layover-details">
+                <span
+                  >⏱️ Escale à {{ trip.return.layovers[i].name }} ({{
+                    trip.return.layovers[i].id
+                  }})</span
+                >
+                <span>{{
+                  formatDuration(trip.return.layovers[i].duration)
+                }}</span>
+                <span
+                  *ngIf="trip.return.layovers[i].overnight"
+                  class="overnight"
+                  >(Nuit)</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="total-duration">
+            Durée totale : {{ formatDuration(trip.return.total_duration) }}
+          </div>
+        </div>
+
+        <div class="flight-extensions" *ngIf="trip.return.extensions?.length">
+          <div class="extension" *ngFor="let ext of trip.return.extensions">
+            ℹ️ {{ ext }}
+          </div>
+        </div>
+      </div>
+      <div class="flight-footer">
+        <button class="select-button" (click)="selectFlight(trip)">
+          Sélectionner
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -11,12 +11,11 @@ import { environment } from '../../../../envs/environment';
 export class AuthService {
 
   private apiUrl: string = environment.authUrl;
-  private userDataUrl = environment.userDataUrl;
 
   constructor(private http: HttpClient, private router: Router) {}
 
   login(credentials: { email: string; password: string }): Observable<string> {
-    return this.http.post(this.apiUrl + 'login', credentials, { responseType: 'text' as 'json' }).pipe(
+    return this.http.post(this.apiUrl + 'login', credentials, { responseType: 'text' }).pipe(
       tap((response: any) => {
         const token = response as string; 
         if (token) {
@@ -46,11 +45,11 @@ export class AuthService {
 
   showExpiryMessage() {
     Swal.fire({
-      title: 'Session Expired',
-      text: 'Your session has expired. You will be logged out now.',
+      title: 'Session expirée',
+      text: 'Veuillez vous reconnecter',
       icon: 'warning',
       showCancelButton: false,
-      confirmButtonText: 'OK',
+      confirmButtonText: 'Login',
     }).then(() => {
       this.logout(); // Log the user out after showing the message
     });
@@ -73,7 +72,7 @@ export class AuthService {
       }
       localStorage.setItem('tokenExpiration', payload.exp.toString()); // Store expiration timestamp
     } catch (error) {
-      this.logout(); // In case of error, log the user out
+      this.logout();
     }
   }
 
@@ -89,6 +88,7 @@ export class AuthService {
 
   hasRole(role: string): boolean {
     const roles = localStorage.getItem('userRoles');
+    
     if (!roles) return false;
     return JSON.parse(roles).includes(role);
   }

@@ -1,28 +1,35 @@
-<nav aria-label="breadcrumb">
+<nav aria-label="breadcrumb" class="mt-3">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a routerLink=".">Home</a></li>
+    <li class="breadcrumb-item"><a routerLink=".">General</a></li>
     <li class="breadcrumb-item active" aria-current="page">
-      Import from Intern Apps
+      Importer CSV
     </li>
   </ol>
 </nav>
-<div class="container">
-  <input type="file" (change)="uploadFile($event)" class="form-control mb-3" />
-  @if(errorMessage){
-  <div class="text-danger mb-2">{{ errorMessage }}</div>
-  }
-  <button class="btn btn-primary" [disabled]="isLoading" (click)="submitFile()">
-    Import CSV
-  </button>
+
+<div class="form-wrapper">
+  <div class="upload-card">
+    <h5 class="mb-3">Importer un fichier Excel</h5>
+    <input type="file" (change)="uploadFile($event)" class="form-control mb-3" />
+    @if(errorMessage){
+      <div class="text-danger mb-2">{{ errorMessage }}</div>
+    }
+    <button class="btn btn-primary" [disabled]="isLoading" (click)="submitFile()">
+      Importer CSV
+    </button>
+  </div>
 </div>
+
 @if(isLoading) {
-  <div class="splash-screen2">
-    <div class="logo"></div> <!-- Logo centré -->
-    <div class="spinner">
-      <span class="dots"></span>
-    </div>
-    <div class="message">
-      <span id="loadingText">{{ currentMessage }}</span>
+  <div class="splash-overlay">
+    <div class="splash-box">
+      <div class="logo"></div>
+      <div class="spinner">
+        <span class="dots"></span>
+      </div>
+      <div class="message">
+        <span id="loadingText">{{ currentMessage }}</span>
+      </div>
     </div>
   </div>
 }

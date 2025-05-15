@@ -25,6 +25,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     importProvidersFrom([SweetAlert2Module.forRoot()]), // ngx-sweetalert2: https://github.com/sweetalert2/ngx-sweetalert2
     provideHighlightOptions(highlightOptions), // ngx-highlightjs: https://github.com/murhafsousli/ngx-highlightjs
-    provideHttpClient(),  // ✅ Add this to provide HttpClient globally
+    provideHttpClient(), provideAnimationsAsync(),  // ✅ Add this to provide HttpClient globally
   ],
 };

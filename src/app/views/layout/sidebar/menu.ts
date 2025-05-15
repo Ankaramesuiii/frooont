@@ -11,6 +11,26 @@ export const MENU: MenuItem[] = [
     link: '/dashboard'
   },
   {
+    label: 'Budget',
+    link: '/general/budget',
+    icon: 'dollar-sign',
+  },
+  {
+    label: 'Formation',
+    link: '/general/formations',
+    icon: 'book-open',
+  },
+  {
+    label: 'Voyage',
+    link: '/general/voyages',
+    icon: 'map'
+  },
+  {
+    label: 'Calendrier',
+    icon: 'calendar',
+    link: '/apps/calendar',
+  },
+  {
     label: 'Web Apps',
     isTitle: true
   },
@@ -36,15 +56,6 @@ export const MENU: MenuItem[] = [
     label: 'Chat',
     icon: 'message-square',
     link: '/apps/chat',
-  },
-  {
-    label: 'Calendar',
-    icon: 'calendar',
-    link: '/apps/calendar',
-    badge: {
-      variant: 'primary',
-      text: 'Event',
-    }
   },
   {
     label: 'Components',
@@ -272,13 +283,12 @@ export const MENU: MenuItem[] = [
     isTitle: true
   },
   {
-    label: 'Special pages',
-    icon: 'book',
+    
+    label: 'sui',
+    link: '/general/formation',
+    icon: 'book-open',
     subItems: [
-      {
-        label: 'Blank page',
-        link: '/general/welcome-page',
-      },
+     
       {
         label: 'Faq',
         link: '/general/faq',

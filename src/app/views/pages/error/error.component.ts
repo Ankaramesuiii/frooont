@@ -22,22 +22,23 @@ export class ErrorComponent implements OnInit {
     
     switch(this.type) {
       case '403':
-        this.title = 'Forbidden';
-        this.desc = 'Oopps!! You are not allowed to access this page.'
+        this.title = 'Interdit';
+        this.desc = 'Vous n\'avez pas l\'autorisation d\'accéder à cette page.'
         break;  
       case '404':
-        this.title = 'Page Not Found';
-        this.desc = 'Oopps!! The page you were looking for doesn\'t exist.'
+        this.title = 'Page non trouvée';
+        this.desc = 'La page que vous recherchez n\'existe pas ou a été supprimée.'
         break;
       case '500':
-        this.title = 'Internal Server Error',
-        this.desc = 'Oopps!! There wan an error. Please try agin later.'
+        this.title = 'Erreur interne du serveur';
+        this.desc = 'Une erreur s\'est produite sur le serveur. Veuillez réessayer plus tard.'
         break;
       default:
         this.type = 'Ooops..';
-        this.title = 'Something went wrong';
-        this.desc = 'Looks like something went wrong.<br>' + 'We\'re working on it';
-    }
+        this.title = 'Erreur';
+        this.desc = 'Une erreur s\'est produite. Veuillez réessayer plus tard.'
+        break;
+      }
   }
 
 }

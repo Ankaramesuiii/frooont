@@ -7,9 +7,7 @@ import { AuthService } from '../../../../core/services/auth/auth.service';
 @Component({
   selector: 'app-blank',
   standalone: true,
-  imports: [
-    RouterLink
-  ],
+  imports: [RouterLink],
   templateUrl: './blank.component.html',
 })
 export class BlankComponent implements OnInit {
@@ -25,7 +23,7 @@ export class BlankComponent implements OnInit {
     "Finalisation"
   ];
   currentMessageIndex: number = 0;
-  currentMessage = this.messages[0]; // Message initial
+  currentMessage = this.messages[0];
   intervalId: any;
 
   constructor(private uploadService: UploadService, private authService: AuthService) {}
@@ -41,8 +39,8 @@ export class BlankComponent implements OnInit {
     }
 
     const validTypes = [
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-      'application/vnd.ms-excel' // .xls
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel'
     ];
 
     if (!validTypes.includes(file.type) && !file.name.match(/\.(xls|xlsx)$/i)) {
@@ -52,7 +50,7 @@ export class BlankComponent implements OnInit {
     }
 
     this.selectedFile = file;
-    this.errorMessage = ''; // Clear any previous error
+    this.errorMessage = '';
   }
 
   submitFile() {
@@ -60,42 +58,49 @@ export class BlankComponent implements OnInit {
       this.errorMessage = 'Veuillez sélectionner un fichier Excel valide !';
       return;
     }
-  
-    this.isLoading = true; // Afficher le loader
-    this.errorMessage = ''; // Clear previous errors
 
-    // Lancer l'animation du message
-    this.startMessageRotation();
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.currentMessageIndex = 0;
+    this.currentMessage = this.messages[0];
 
-    this.uploadService.uploadFile(this.selectedFile).subscribe({
-      next: (res) => {
-        this.isLoading = false; // Cacher le loader
-        clearInterval(this.intervalId); // Stopper la rotation des messages
-
-        Swal.fire({
-          title: 'Importation Réussie!',
-          text: 'Le fichier a été importé avec succès.',
-          icon: 'success',
-          confirmButtonText: 'Fermer'
-        });
-      },
-      error: (err) => {
-        this.isLoading = false; // Cacher le loader
-        clearInterval(this.intervalId); // Stopper la rotation des messages
-
-        this.handleError(err.message || 'Une erreur s\'est produite lors de l\'importation du fichier.');
-      }
+    this.startMessageRotation(() => {
+      // Only triggered after final message is displayed
+      this.uploadService.uploadFile(this.selectedFile!).subscribe({
+        next: (res) => {
+          this.isLoading = false;
+          Swal.fire({
+            title: 'Importation Réussie!',
+            text: res.warning? res.warning : 'Le fichier a été importé avec succès.',
+            icon: 'success',
+            confirmButtonText: 'Fermer'
+          });
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.handleError(err.message || 'Une erreur s\'est produite lors de l\'importation du fichier.');
+        }
+      });
     });
   }
 
-  startMessageRotation() {
-    this.currentMessageIndex = 0;
-    this.currentMessage = this.messages[this.currentMessageIndex];
-
+  startMessageRotation(onComplete: () => void) {
     this.intervalId = setInterval(() => {
-      this.currentMessageIndex = (this.currentMessageIndex + 1) % this.messages.length;
-      this.currentMessage = this.messages[this.currentMessageIndex];
-    }, 2000);
+      this.currentMessageIndex++;
+
+      if (this.currentMessageIndex < this.messages.length - 1) {
+        this.currentMessage = this.messages[this.currentMessageIndex];
+      } else {
+        // Show "Finalisation" and stop rotating
+        clearInterval(this.intervalId);
+        this.currentMessage = this.messages[this.messages.length - 1];
+
+        // Wait a bit before proceeding (optional)
+        setTimeout(() => {
+          onComplete();
+        }, 1000); // Small delay after "Finalisation"
+      }
+    }, 5000); // 5 seconds between messages
   }
 
   private handleError(message: string) {

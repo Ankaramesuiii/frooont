@@ -4,10 +4,22 @@ import { authGuard } from "../../../core/guards/auth.guard";
 export default [
   { path: '', redirectTo: 'profile', pathMatch: 'full' },
   {
-    path: 'welcome-page',
+    path: 'formations',
     loadComponent: () => import('./blank/blank.component').then(c => c.BlankComponent),
     canActivate: [authGuard],
-    data: { roles: ['ROLE_SUPER_MANAGER'] } // Only allow Managers
+    data: { roles: ['ROLE_SUPER_MANAGER', 'ROLE_MANAGER'] } // Only allow Managers
+  },
+  {
+    path: 'voyages',
+    loadComponent: () => import('./flight/flight.component').then(c => c.FlightComponent),
+    canActivate: [authGuard],
+    data: { roles: ['ROLE_SUPER_MANAGER', 'ROLE_MANAGER'] } // Only allow Managers
+  },
+  {
+    path: 'budget',
+    loadComponent: () => import('./budget/budget.component').then(c => c.BudgetComponent),
+    canActivate: [authGuard],
+    data: { roles: ['ROLE_SUPER_MANAGER', 'ROLE_MANAGER'] } // Only allow Managers
   },
   {
     path: 'faq',
