@@ -126,7 +126,7 @@ export class FlightComponent implements OnInit {
     }
   
     this.flights = this.getAllFlights(response);
-  
+    
     if (this.flights.length === 0) {
       this.error = 'Aucun vol ne correspond...';
       this.loading = false;
@@ -225,7 +225,8 @@ export class FlightComponent implements OnInit {
       flight.price = flight.price * this.currencyValue;
     });
     
-
+    console.log('All flights:', flights);
+    
     // Remove duplicates by flight number and price
     return flights.filter((flight, index, self) =>
       index === self.findIndex(f =>

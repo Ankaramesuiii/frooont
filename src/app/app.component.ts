@@ -11,8 +11,7 @@ import { AuthService } from './core/services/auth/auth.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
-  title = 'demo1';
-
+  
   constructor(private themeModeService: ThemeModeService,private authService: AuthService) {}
 
   ngOnInit() {

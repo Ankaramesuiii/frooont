@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FlightComponent } from './flight.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { RouterModule } from '@angular/router';
 
 describe('FlightComponent', () => {
   let component: FlightComponent;
@@ -8,7 +11,10 @@ describe('FlightComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FlightComponent]
+      imports: [FlightComponent,RouterModule.forRoot([]),
+    ],
+       providers: [provideHttpClient(), // Provide the HttpClient along with HttpClientTesting
+              provideHttpClientTesting()]
     })
     .compileComponents();
 
