@@ -7,11 +7,13 @@ import { FlightSearchParams } from '../../models/flight.search.params.model';
 import { FlightSearchResponse } from '../../models/flight.search.response.model';
 import { amadeus } from '../../../../envs/env.amadeus';
 import { TeamMember } from '../../models/team.member.model';
+import { Hotel } from '../../models/hotel.model';
 @Injectable({
   providedIn: 'root'
 })
 export class SerpapiService {
-  private readonly api = environment.serpApiUrl;
+  private readonly api = environment.serpApiFlightUrl;
+  private readonly apiHotel = environment.serpApiHotelUrl;
   private readonly teamMembersNameUrl = environment.teamMembersNameUrl;
   private readonly AMADEUS_API_URL = 'https://test.api.amadeus.com/v1/reference-data/locations';
   private accessToken: string | null = null;
@@ -32,6 +34,7 @@ export class SerpapiService {
 
     return this.http.post(amadeus.getTokenUrl, body);
   }
+
   searchFlights(params: FlightSearchParams): Observable<FlightSearchResponse> {
     let httpParams = new HttpParams()
       .set('engine', 'google_flights')
@@ -41,8 +44,8 @@ export class SerpapiService {
       .set('adults', params.adults.toString())
       .set('type', params.type.toString())
       .set('currency', 'EUR')
-      .set('gl', 'us')
-      .set('hl', 'en');
+      .set('gl', 'fr')
+      .set('hl', 'fr');
 
     if (params.return_date) {
       httpParams = httpParams.set('return_date', params.return_date);
@@ -73,7 +76,7 @@ export class SerpapiService {
 
   convertCurrency(from: string, to: string): Observable<number> {
     const url = `https://api.currencyapi.com/v3/latest?base_currency=${from}&currencies=${to}`;
-
+    
     return this.http.get<any>(url, {
       headers: {
         'apikey': environment.exchangerateApiKey
@@ -100,6 +103,38 @@ export class SerpapiService {
 
   getTeamMemberName(): Observable<any> {
     return this.http.get<any>(`${this.teamMembersNameUrl}`, {
+      headers: this.authService.getHeaders()
+    });
+  }
+
+  searchHotels(params: {
+    q: string;
+    check_in_date: string;
+    check_out_date: string;
+    adults?: number;
+    hl?: string;
+    gl?: string;
+    currency?: string;
+  }): Observable<Hotel[]> {
+    const httpParams = new HttpParams({ fromObject: { ...params } });
+    return this.http.get<Hotel[]>(this.apiHotel, {
+      params: httpParams,
+      headers: this.authService.getHeaders()
+    });
+  }
+
+  searchHotelsData(params: {
+    q: string;
+    check_in_date: string;
+    check_out_date: string;
+    adults?: number;
+    hl?: string;
+    gl?: string;
+    currency?: string;
+  }): Observable<Hotel> {
+    const httpParams = new HttpParams({ fromObject: { ...params } });
+    return this.http.get<Hotel>(this.apiHotel, {
+      params: httpParams,
       headers: this.authService.getHeaders()
     });
   }

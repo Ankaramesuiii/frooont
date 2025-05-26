@@ -5,10 +5,11 @@ export const environment = {
     uploadData: '/api/training/',
     uploadBudget: '/api/training/upload-budgets',
     userDataUrl: '/api/user/',
-    serpApiUrl: '/api/flights/search',
+    serpApiFlightUrl: '/api/serpapi/flights/search',
+    serpApiHotelUrl: '/api/serpapi/hotels/search',
     calendarTrainingUrl: '/api/user/training',
     profileUrl: '/api/user/profile',
     teamMembersNameUrl: '/api/user/team-members',
-    exchangerateApiKey:'cur_live_yVRELAKhuX3nH3YdOPl4ILsmD8a7h2UgxbB3tijx',
+    exchangerateApiKey:'cur_live_xX7Dz0VNIElWlpBUH0YSkz1KOnKz8opOfh4Av3Qn',
     missionUrl : '/api/missions',
 };

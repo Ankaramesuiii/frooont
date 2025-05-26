@@ -113,11 +113,11 @@
               [(ngModel)]="selectTeamMembers"
               [placeholder]="'Sélectionner des passagers'"
               name="adults"
+              [closeOnSelect]="false"
             >
               @for (tm of teamMembers; track tm) {
               <ng-option [value]="tm">{{ tm?.name }}</ng-option>
               }
-              <ng-option value="custom">Custom</ng-option>
             </ng-select>
           </div>
         </div>
@@ -133,13 +133,6 @@
     <div class="loading-content">
       <div class="spinner"></div>
       <p>Chargement des données de vol...</p>
-    </div>
-  </div>
-
-  <div class="loading-overlay" *ngIf="loadingAirports">
-    <div class="loading-content">
-      <div class="spinner"></div>
-      <p>Chargement des aéroports...</p>
     </div>
   </div>
 

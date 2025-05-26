@@ -38,7 +38,7 @@ export class FlightComponent implements OnInit {
   flights: Flight[] = [];
   returnFlights: Flight[] = [];
   loading = false;
-  loadingAirports = false;
+
   error: string | null = null;
   isOneWay = false;
   selectedOutboundFlight: Flight | null = null;
@@ -295,8 +295,6 @@ export class FlightComponent implements OnInit {
   onSearch(query: string, type: 'departure' | 'arrival'): void {
     if (query.length < 3) return;
 
-    this.loadingAirports = true;
-
     const matchedAirports = this.TUNISIAN_AIRPORTS.filter(airport =>
       airport.name.toLowerCase().includes(query.toLowerCase()) ||
       airport.iataCode.toLowerCase().includes(query.toLowerCase())
@@ -309,7 +307,6 @@ export class FlightComponent implements OnInit {
       } else {
         this.arrivalSuggestions = matchedAirports;
       }
-      this.loadingAirports = false;
     } else {
       // Fetch token and then call the API
       this.flightService.getAccessToken().pipe(
@@ -324,11 +321,9 @@ export class FlightComponent implements OnInit {
           } else {
             this.arrivalSuggestions = data;
           }
-          this.loadingAirports = false;
         },
         error: (error) => {
-          this.loadingAirports = false;
-        }
+          this.error = 'Failed to fetch airport suggestions. Please try again later.';}
       });
     }
   }

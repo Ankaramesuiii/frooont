@@ -1,0 +1,355 @@
+.frame {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+}
+
+.rounded-card {
+  background-color: white;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2.2rem;
+  }
+}
+
+.search-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 20px;
+  align-items: flex-end;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background-color: #f9f9f9;
+
+      &:focus {
+        outline: none;
+        border-color: #4dabf7;
+        box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.2);
+        background-color: white;
+      }
+    }
+  }
+
+  ng-select {
+    .ng-select-container {
+      min-height: 1042px;
+      border-radius: 6px;
+      border-color: #ddd;
+    }
+  }
+
+  button {
+    padding: 10px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    height: fit-content;
+
+    &:hover {
+      background-color: #0069d9;
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.3);
+    }
+  }
+}
+
+.hotels-content {
+  .hotels-section {
+    display: flex;
+    gap: 20px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+  h3 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+  }
+
+  .hotel-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 600px;
+    padding-right: 10px;
+    border-right: 1px solid #eee;
+    margin-top: 20px;
+  }
+
+  .selected-hotel-container {
+    flex: 1;
+    max-height: 600px;
+    overflow-y: auto;
+    margin-top: 20px;
+  }
+}
+
+.hotel-card {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &.selected {
+    border-left: 4px solid #007bff;
+    background-color: #f8f9fa;
+  }
+}
+
+.hotel-thumbnail {
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.hotel-info {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 5px 0;
+    color: #333;
+  }
+}
+
+.hotel-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+  color: #ffc107;
+}
+
+.hotel-time,
+.hotel-price {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 3px;
+}
+
+.star-icon {
+  color: #ffc107;
+}
+
+.hotel-images {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0;
+
+  .image-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .thumbnail {
+    width: 100px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 3;
+    position: relative;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+
+  .image-preview {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    width: 300px;
+    height: 200px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 2px solid white;
+    transition: opacity 0.2s;
+
+    .preview-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid white;
+    }
+  }
+}
+
+.hotel-meta {
+  div {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+}
+
+.amenities-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.amenity-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f5f7fa;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9em;
+}
+
+.amenity-icon {
+  color: #000000;
+  font-size: 0.9em;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .loading-content {
+    text-align: center;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+    .spinner {
+      border: 5px solid rgba(0, 0, 0, 0.1);
+      border-left-color: #1971c2;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    p {
+      color: #495057;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.map-section {
+  #map {
+    height: 400px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: height 0.3s ease;
+
+    &.map-expanded {
+      height: 80vh;
+    }
+  }
+
+  .toggle-map-btn {
+    margin-top: 10px;
+  }
+}
+.error-message {
+  background-color: #fff5f5;
+  border: 1px solid #ffd6d6;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+
+  .error-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      color: #e03131;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .error-text {
+      h3 {
+        color: #c92a2a;
+        margin: 0 0 8px 0;
+        font-size: 1.2rem;
+      }
+
+      p {
+        color: #495057;
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -78,7 +78,7 @@ export class BlankComponent implements OnInit {
         },
         error: (err) => {
           this.isLoading = false;
-          this.handleError(err.message || 'Une erreur s\'est produite lors de l\'importation du fichier.');
+          this.handleError('Une erreur s\'est produite lors de l\'importation du fichier.');
         }
       });
     });

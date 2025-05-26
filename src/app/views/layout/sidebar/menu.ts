@@ -26,6 +26,11 @@ export const MENU: MenuItem[] = [
     icon: 'map'
   },
   {
+    label: 'Hotel',
+    link: '/general/hotel-map',
+    icon: 'trash'
+  },
+  {
     label: 'Calendrier',
     icon: 'calendar',
     link: '/apps/calendar',

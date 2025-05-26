@@ -15,8 +15,12 @@
 }
 .card {
   height: 100% !important;
-  min-height: 500px !important; // or whatever you want
+  min-height: 567px !important; // or whatever you want
 }
 .row {
   height: 100% !important;
+}
+.py-5 {
+    padding-top: 7rem !important;
+    padding-bottom: 3rem !important;
 }

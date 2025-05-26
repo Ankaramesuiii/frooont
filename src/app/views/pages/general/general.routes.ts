@@ -22,6 +22,12 @@ export default [
     data: { roles: ['ROLE_SUPER_MANAGER', 'ROLE_MANAGER'] } // Only allow Managers
   },
   {
+    path: 'hotel-map',
+    loadComponent: () => import('./hotel-map/hotel-map.component').then(c => c.HotelMapComponent),
+    canActivate: [authGuard],
+    data: { roles: ['ROLE_SUPER_MANAGER', 'ROLE_MANAGER'] } // Only allow Managers
+  },
+  {
     path: 'faq',
     loadComponent: () => import('./faq/faq.component').then(c => c.FaqComponent)
   },

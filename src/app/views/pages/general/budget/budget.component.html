@@ -17,115 +17,115 @@
           </h4>
 
           <aw-wizard #wizardForm>
+            <!-- Step 1 - Formations -->
             <aw-wizard-step stepTitle="Formations">
-              <form (ngSubmit)="form1Submit()" [formGroup]="validationForm1" class="wizard-wrapper">
-                <div class="row mb-4">
-                  <label class="col-form-label"
-                    >Budget alloué pour les formations</label
-                  >
-                  <div class="col-sm-9">
-                    <input
-                      type="number"
-                      class="form-control"
-                      formControlName="budgetFormation"
-                      [ngClass]="{
-                        'is-invalid':
-                          isForm1Submitted && form1.budgetFormation.errors
-                      }"
-                      placeholder="Budget pour les formations"
-                    />
-                    <p
-                      class="invalid-feedback"
-                      *ngIf="
-                        isForm1Submitted &&
-                        form1.budgetFormation.errors?.pattern
-                      "
-                    >
-                      Doit être un nombre valide positif
-                    </p>
+              <div class="wizard-form-wrapper">
+                <form (ngSubmit)="form1Submit()" [formGroup]="validationForm1">
+                  <div class="form-group row mb-4">
+                    <label class="col-form-label col-sm-4">Budget alloué pour les formations</label>
+                    <div class="col-sm-8">
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="budgetFormation"
+                        [ngClass]="{
+                          'is-invalid': isForm1Submitted && form1.budgetFormation.errors
+                        }"
+                        placeholder="Budget pour les formations"
+                      />
+                      <p
+                        class="invalid-feedback"
+                        *ngIf="isForm1Submitted && form1.budgetFormation.errors?.pattern"
+                      >
+                        Doit être un nombre valide positif
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div class="d-flex justify-content-center mt-2">
-                  <button class="btn btn-primary" type="submit">
-                    Continue
-                  </button>
-                </div>
-              </form>
+                  <div class="form-group row">
+                    <div class="col-sm-12 text-center">
+                      <button class="btn btn-primary" type="submit">
+                        Continue
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </aw-wizard-step>
 
+            <!-- Step 2 - Voyages -->
             <aw-wizard-step stepTitle="Voyages">
-              
-              <form (ngSubmit)="form2Submit()" [formGroup]="validationForm2">
-                <div class="row mb-4">
-                  <label class="col-form-label"
-                    >Budget alloué pour les voyages</label
-                  >
-                  <div class="col-sm-9">
-                    <input
-                      type="number"
-                      class="form-control"
-                      formControlName="budgetVoyage"
-                      [ngClass]="{
-                        'is-invalid':
-                          isForm2Submitted && form2.budgetVoyage.errors
-                      }"
-                      placeholder="Budget pour les voyages"
-                    />
-                    <p
-                      class="invalid-feedback"
-                      *ngIf="
-                        isForm2Submitted && form2.budgetVoyage.errors?.pattern
-                      "
-                    >
-                      Doit être un nombre valide positif
-                    </p>
+              <div class="wizard-form-wrapper">
+                <form (ngSubmit)="form2Submit()" [formGroup]="validationForm2">
+                  <div class="form-group row mb-4">
+                    <label class="col-form-label col-sm-4">Budget alloué pour les voyages</label>
+                    <div class="col-sm-8">
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="budgetVoyage"
+                        [ngClass]="{
+                          'is-invalid': isForm2Submitted && form2.budgetVoyage.errors
+                        }"
+                        placeholder="Budget pour les voyages"
+                      />
+                      <p
+                        class="invalid-feedback"
+                        *ngIf="isForm2Submitted && form2.budgetVoyage.errors?.pattern"
+                      >
+                        Doit être un nombre valide positif
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div class="d-flex justify-content-center mt-2">
-                  <button class="btn btn-primary" type="submit">
-                    Continue
-                  </button>
-                </div>
-              </form>
+                  <div class="form-group row">
+                    <div class="col-sm-12 text-center">
+                      <button class="btn btn-primary" type="submit">
+                        Continue
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </aw-wizard-step>
 
+            <!-- Step 3 - Autres -->
             <aw-wizard-step stepTitle="Autres">
-              
-              <form (ngSubmit)="form3Submit()" [formGroup]="validationForm3">
-                <div class="row mb-4">
-                  <label class="col-form-label">Autres budgets</label>
-                  <div class="col-sm-9">
-                    <input
-                      type="number"
-                      class="form-control"
-                      formControlName="budgetAutre"
-                      [ngClass]="{
-                        'is-invalid':
-                          isForm3Submitted && form3.budgetAutre.errors
-                      }"
-                      placeholder="Budget pour autres activités"
-                    />
-                    <p
-                      class="invalid-feedback"
-                      *ngIf="
-                        isForm3Submitted && form3.budgetAutre.errors?.pattern
-                      "
-                    >
-                      Doit être un nombre valide positif
-                    </p>
+              <div class="wizard-form-wrapper">
+                <form (ngSubmit)="form3Submit()" [formGroup]="validationForm3">
+                  <div class="form-group row mb-4">
+                    <label class="col-form-label col-sm-4">Autres budgets</label>
+                    <div class="col-sm-8">
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="budgetAutre"
+                        [ngClass]="{
+                          'is-invalid': isForm3Submitted && form3.budgetAutre.errors
+                        }"
+                        placeholder="Budget pour autres activités"
+                      />
+                      <p
+                        class="invalid-feedback"
+                        *ngIf="isForm3Submitted && form3.budgetAutre.errors?.pattern"
+                      >
+                        Doit être un nombre valide positif
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div class="d-flex justify-content-center mt-2">
-                  <button class="btn btn-primary" type="submit">
-                    Continue
-                  </button>
-                </div>
-              </form>
+                  <div class="form-group row">
+                    <div class="col-sm-12 text-center">
+                      <button class="btn btn-primary" type="submit">
+                        Continue
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </aw-wizard-step>
 
+            <!-- Final Step -->
             <aw-wizard-step stepTitle="">
               <div class="text-center">
                 <i
@@ -169,9 +169,6 @@
                 </button>
               </div>
             </aw-wizard-step>
-            
-            
-            
           </aw-wizard>
         </div>
       </div>

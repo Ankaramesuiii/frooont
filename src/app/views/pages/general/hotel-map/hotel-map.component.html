@@ -1,0 +1,175 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a routerLink=".">General</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Voyages</li>
+  </ol>
+</nav>
+<div class="frame">
+
+
+<div class="main-container rounded-card">
+  <h1>Recherche des hôtels</h1>
+
+<form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-form">
+    <div class="form-group">
+        <label>Hotel</label>
+        <input placeholder="Rechercher" formControlName="q" />
+    </div>
+    <div class="form-group">
+        <label>Date d'aller</label>
+        <input formControlName="check_in_date" type="date" />
+    </div>
+    <div class="form-group">
+        <label>Date de retour</label>
+        <input formControlName="check_out_date" type="date" />
+    </div>
+    <div class="form-group">
+        <label>Passagers</label>
+        <ng-select
+            [multiple]="true"
+            formControlName="teamMembers"
+            [placeholder]="'Sélectionner des passagers'"
+            [closeOnSelect]="false"
+        >
+            @for (tm of teamMembers; track tm) {
+                <ng-option [value]="tm">{{ tm?.name }}</ng-option>
+            }
+        </ng-select>
+    </div>
+    <button type="submit">Rechercher</button>
+</form>
+
+  <div class="hotels-content">
+    <div class="hotels-section">
+      <!-- Left side - Hotel list -->
+       <hr>
+      <div class="hotel-list" *ngIf="filteredHotels.length > 0">
+        <h3>Liste des hôtels ({{ filteredHotels.length }})</h3>
+        <div
+          *ngFor="let hotel of filteredHotels"
+          (click)="selectHotel(hotel)"
+          class="hotel-card"
+          [class.selected]="hotel === selectedHotel"
+        >
+          <img
+            *ngIf="hotel.images?.[0]?.thumbnail"
+            [src]="getSafeImageUrl(hotel.images[0].thumbnail)"
+            alt="{{ hotel.name }}"
+            class="hotel-thumbnail"
+            (error)="handleImageError($event)"
+          />
+          <div class="hotel-info">
+            <h4>{{ hotel.name }}</h4>
+            <div class="hotel-rating">
+              <span *ngIf="hotel.rating">{{ hotel.rating }}/5</span>
+            </div>
+            <div class="hotel-time">
+              <fa-icon [icon]="faClock"></fa-icon>
+              <span
+                >Arrivée: {{ hotel.check_in_time }} | Départ:
+                {{ hotel.check_out_time }}</span
+              >
+            </div>
+            <div class="hotel-price">
+              <fa-icon [icon]="faTag"></fa-icon>
+              {{ hotel.total_rate.lowest | convertPrice : currencyValue }} TND
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side - Selected hotel -->
+      <div class="selected-hotel-container" *ngIf="selectedHotel">
+        <h3>{{ selectedHotel.name }}</h3>
+        <div class="hotel-images">
+          <div
+            *ngFor="let image of selectedHotel.images?.slice(0, 3)"
+            class="image-container"
+            (mouseenter)="showPreview($event)"
+            (mouseleave)="hidePreview($event)"
+          >
+            <img
+              [src]="getSafeImageUrl(image.thumbnail)"
+              alt="{{ selectedHotel.name }}"
+              class="thumbnail"
+            />
+            <div class="image-preview">
+              <img
+                [src]="
+                  getSafeImageUrl(image.thumbnail)
+                "
+                alt="{{ selectedHotel.name }}"
+                class="preview-image"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="hotel-meta">
+          <div>
+            <fa-icon [icon]="faStar"></fa-icon> Note:
+            {{ selectedHotel.overall_rating || "N/A" }}
+          </div>
+          <div *ngIf="selectedHotel.rate_per_night">
+            <fa-icon [icon]="faTag"></fa-icon> Prix total:
+            {{ selectedHotel.total_rate.lowest | convertPrice : currencyValue }} TND
+          </div>
+          <div *ngIf="selectedHotel.rate_per_night">
+            <fa-icon [icon]="faTag"></fa-icon> Prix de la nuitée:
+            {{ selectedHotel.rate_per_night.lowest | convertPrice : currencyValue }} TND
+          </div>
+          <div>
+            <fa-icon [icon]="faMapMarkerAlt"></fa-icon>
+            {{ adress }}
+          </div>
+          <div class="amenities-container">
+            <div
+              *ngFor="let amenity of selectedHotel?.amenities"
+              class="amenity-item"
+            >
+              <fa-icon
+                [icon]="getAmenityIcon(amenity)"
+                class="amenity-icon"
+              ></fa-icon>
+              <span class="amenity-text">{{ amenity }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="error-message" *ngIf="error">
+    <div class="error-content">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <div class="error-text">
+        <h3>Erreur de Recherche</h3>
+        <p>Nous n'avons pas pu charger les hôtels. Veuillez réessayer.</p>
+      </div>
+    </div>
+  </div>
+<!-- Map outside the rounded-card -->
+<div class="map-section">
+  <div id="map" [class.map-expanded]="isMapExpanded"></div>
+  <button class="toggle-map-btn" (click)="toggleMapSize()">
+    <fa-icon [icon]="isMapExpanded ? faCompressAlt : faExpandAlt"></fa-icon>
+  </button>
+</div>
+
+<div class="loading-overlay" *ngIf="loading">
+  <div class="loading-content rounded-card">
+    <div class="spinner"></div>
+    <p>Chargement des hotels...</p>
+  </div>
+</div>
+
