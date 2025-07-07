@@ -1,0 +1,19 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.full-page-container {
+  width: 85vw;
+  height: 106vh;
+  overflow: hidden;
+  margin-left: -180px;
+}
+
+.full-page-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}

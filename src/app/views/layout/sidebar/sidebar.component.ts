@@ -11,6 +11,7 @@ import { MenuItem } from './menu.model';
 import { FeatherIconDirective } from '../../../core/feather-icon/feather-icon.directive';
 import { CalenderTrainingService } from '../../../core/services/calender-training/calender-training.service';
 import { Training } from '../../../core/models/training.model';
+import { AuthService } from '../../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -33,7 +34,7 @@ export class SidebarComponent implements OnInit, AfterViewInit {
   @ViewChild('sidebarMenu') sidebarMenu: ElementRef;
 
   constructor(@Inject(DOCUMENT) private document: Document, private renderer: Renderer2, router: Router,
-  private trainingService: CalenderTrainingService){
+  private trainingService: CalenderTrainingService, private authService: AuthService){
     router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
 
@@ -242,12 +243,23 @@ export class SidebarComponent implements OnInit, AfterViewInit {
     }
   };
   loadMenu(): void {
+    // Get user roles from AuthService
+    const isAdmin = this.authService.hasRole && this.authService.hasRole('ROLE_SUPER_MANAGER');
+    const userRoles = JSON.parse(localStorage.getItem('userRoles') || '[]');
+
     this.trainingService.getTraining().subscribe((res: any) => {
       const hasTodayTraining = res.training.some((t: Training) => {
         const today = new Date().toISOString().slice(0, 10);
         return t.startDate?.slice(0, 10) === today;
       });
-      this.menuItems = MENU.map((item) => {
+      this.menuItems = MENU.filter((item: any) => {
+        if (isAdmin) return true;
+        // If not admin, check for allowed roles on the menu item
+        if (item.roles && Array.isArray(item.roles)) {
+          return item.roles.some((role: string) => userRoles.includes(role));
+        }
+        return true; // If no roles specified, show to all
+      }).map((item: any) => {
         if (item.label === 'Calendrier') {
           return {
             ...item,

@@ -4,20 +4,23 @@
 // Global icon font
 @import "../public/fonts/feather/style.css";
 
-
 // 3rd party plugins
 @import "highlight.js/styles/atom-one-light.css";
 @import 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
 @import 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
 @import "animate.css/animate.min.css"; // used in ngx-owl-carousel-o
 @import "@ng-select/ng-select/themes/default.theme.css";
-@import "metismenujs/scss/metismenujs";
+@import "../node_modules/metismenujs/scss/metismenujs.scss";
 @import "dropzone/dist/min/dropzone.min.css";
 @import "quill/dist/quill.snow.css";
-@import "@rg-software/angular-archwizard/styles/archwizard";
-@import "@siemens/ngx-datatable/index";
-@import "@siemens/ngx-datatable/themes/bootstrap";
-@import "@siemens/ngx-datatable/assets/icons";
+//@import "@rg-software/angular-archwizard/styles/archwizard";
+@import "../node_modules/@rg-software/angular-archwizard/styles/archwizard.scss";
+//@import "@siemens/ngx-datatable/index";
+@import "../node_modules/@siemens/ngx-datatable/index.scss";
+@import "../node_modules/@siemens/ngx-datatable/themes/bootstrap.scss";
+//@import "@siemens/ngx-datatable/themes/bootstrap";
+//@import "@siemens/ngx-datatable/assets/icons";
+@import "../node_modules/@siemens/ngx-datatable/assets/icons.css";
 
 
 // NobleUI styles for LTR layout

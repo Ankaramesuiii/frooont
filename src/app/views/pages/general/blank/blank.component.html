@@ -2,34 +2,38 @@
   <ol class="breadcrumb">
     <li class="breadcrumb-item"><a routerLink=".">General</a></li>
     <li class="breadcrumb-item active" aria-current="page">
-      Importer CSV
+      Importer
     </li>
   </ol>
 </nav>
 
 <div class="form-wrapper">
   <div class="upload-card">
-    <h5 class="mb-3">Importer un fichier Excel</h5>
-    <input type="file" (change)="uploadFile($event)" class="form-control mb-3" />
+    <h5 class="mb-3">Importer les formations</h5>
+    <div class="row mb-3">
+      <div class="col-md-8">
+        <input type="file" (change)="uploadFile($event)" class="form-control" />
+      </div>
+      <div class="col-md-4">
+        <input type="number" [(ngModel)]="year" placeholder="Année" class="form-control" min="2000" max="2100" />
+      </div>
+    </div>
+    
     @if(errorMessage){
       <div class="text-danger mb-2">{{ errorMessage }}</div>
     }
+    
     <button class="btn btn-primary" [disabled]="isLoading" (click)="submitFile()">
-      Importer CSV
+      Importer
     </button>
   </div>
 </div>
 
 @if(isLoading) {
-  <div class="splash-overlay">
-    <div class="splash-box">
-      <div class="logo"></div>
-      <div class="spinner">
-        <span class="dots"></span>
-      </div>
-      <div class="message">
-        <span id="loadingText">{{ currentMessage }}</span>
-      </div>
+  <div class="loading-overlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>{{ currentMessage }}</p>
     </div>
   </div>
 }

@@ -10,6 +10,6 @@ export const environment = {
     calendarTrainingUrl: '/api/user/training',
     profileUrl: '/api/user/profile',
     teamMembersNameUrl: '/api/user/team-members',
-    exchangerateApiKey:'cur_live_xX7Dz0VNIElWlpBUH0YSkz1KOnKz8opOfh4Av3Qn',
+    exchangerateApiKey:'cur_live_umqer7vKD6LVGydlBhhApzjGahEAG1ZIOWDKGEwV',
     missionUrl : '/api/missions',
 };

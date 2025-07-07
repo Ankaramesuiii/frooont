@@ -32,13 +32,16 @@
                           'is-invalid': isForm1Submitted && form1.budgetFormation.errors
                         }"
                         placeholder="Budget pour les formations"
+                        min="1"
                       />
-                      <p
-                        class="invalid-feedback"
-                        *ngIf="isForm1Submitted && form1.budgetFormation.errors?.pattern"
-                      >
-                        Doit être un nombre valide positif
-                      </p>
+                      <div *ngIf="isForm1Submitted && form1.budgetFormation.errors">
+                        <p class="invalid-feedback" *ngIf="form1.budgetFormation.errors.required">
+                          Ce champ est requis
+                        </p>
+                        <p class="invalid-feedback" *ngIf="form1.budgetFormation.errors.pattern">
+                          Doit être un nombre valide positif
+                        </p>
+                      </div>
                     </div>
                   </div>
 
@@ -68,13 +71,16 @@
                           'is-invalid': isForm2Submitted && form2.budgetVoyage.errors
                         }"
                         placeholder="Budget pour les voyages"
+                        min="1"
                       />
-                      <p
-                        class="invalid-feedback"
-                        *ngIf="isForm2Submitted && form2.budgetVoyage.errors?.pattern"
-                      >
-                        Doit être un nombre valide positif
-                      </p>
+                      <div *ngIf="isForm2Submitted && form2.budgetVoyage.errors">
+                        <p class="invalid-feedback" *ngIf="form2.budgetVoyage.errors.required">
+                          Ce champ est requis
+                        </p>
+                        <p class="invalid-feedback" *ngIf="form2.budgetVoyage.errors.pattern">
+                          Doit être un nombre valide positif
+                        </p>
+                      </div>
                     </div>
                   </div>
 
@@ -104,13 +110,16 @@
                           'is-invalid': isForm3Submitted && form3.budgetAutre.errors
                         }"
                         placeholder="Budget pour autres activités"
+                        min="1"
                       />
-                      <p
-                        class="invalid-feedback"
-                        *ngIf="isForm3Submitted && form3.budgetAutre.errors?.pattern"
-                      >
-                        Doit être un nombre valide positif
-                      </p>
+                      <div *ngIf="isForm3Submitted && form3.budgetAutre.errors">
+                        <p class="invalid-feedback" *ngIf="form3.budgetAutre.errors.required">
+                          Ce champ est requis
+                        </p>
+                        <p class="invalid-feedback" *ngIf="form3.budgetAutre.errors.pattern">
+                          Doit être un nombre valide positif
+                        </p>
+                      </div>
                     </div>
                   </div>
 
@@ -118,6 +127,46 @@
                     <div class="col-sm-12 text-center">
                       <button class="btn btn-primary" type="submit">
                         Continue
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </aw-wizard-step>
+
+            <!-- Step 4 - Year Selection -->
+            <aw-wizard-step stepTitle="Année">
+              <div class="wizard-form-wrapper">
+                <form (ngSubmit)="submitYear()" [formGroup]="yearForm">
+                  <div class="form-group row mb-4">
+                    <label class="col-form-label col-sm-4">Année des budgets</label>
+                    <div class="col-sm-8">
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="year"
+                        [ngClass]="{
+                          'is-invalid': isYearSubmitted && yearCtrl.year.errors
+                        }"
+                        placeholder="Entrez l'année (2000-2100)"
+                        min="2000"
+                        max="2100"
+                      />
+                      <div *ngIf="isYearSubmitted && yearCtrl.year.errors">
+                        <p class="invalid-feedback" *ngIf="yearCtrl.year.errors.required">
+                          L'année est requise
+                        </p>
+                        <p class="invalid-feedback" *ngIf="yearCtrl.year.errors.min || yearCtrl.year.errors.max">
+                          L'année doit être entre 2000 et 2100
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-sm-12 text-center">
+                      <button class="btn btn-primary" type="submit">
+                        Soumettre les budgets
                       </button>
                     </div>
                   </div>
@@ -165,7 +214,7 @@
                   type="button"
                   (click)="finishFunction()"
                 >
-                  Enregistrer
+                  Terminer
                 </button>
               </div>
             </aw-wizard-step>

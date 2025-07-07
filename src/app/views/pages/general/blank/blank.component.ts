@@ -3,15 +3,18 @@ import { RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
 import { UploadService } from '../../../../core/services/upload-file/upload.service';
 import { AuthService } from '../../../../core/services/auth/auth.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-blank',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink,CommonModule,FormsModule],
   templateUrl: './blank.component.html',
+  styleUrls: ['./blank.component.scss'],
 })
 export class BlankComponent implements OnInit {
-
+  year: number | null = null;
   isLoading = false;
   selectedFile: File | null = null;
   errorMessage = '';
@@ -30,7 +33,7 @@ export class BlankComponent implements OnInit {
 
   ngOnInit() {}
 
-  uploadFile(event: any) {
+   uploadFile(event: any) {
     const file = event.target.files[0];
 
     if (!file) {
@@ -59,26 +62,32 @@ export class BlankComponent implements OnInit {
       return;
     }
 
+    if (!this.year) {
+      this.errorMessage = 'Veuillez saisir une année valide !';
+      return;
+    }
+
     this.isLoading = true;
     this.errorMessage = '';
     this.currentMessageIndex = 0;
     this.currentMessage = this.messages[0];
 
     this.startMessageRotation(() => {
-      // Only triggered after final message is displayed
-      this.uploadService.uploadFile(this.selectedFile!).subscribe({
+      this.uploadService.uploadFileWithYear(this.selectedFile!, this.year!).subscribe({
         next: (res) => {
           this.isLoading = false;
           Swal.fire({
             title: 'Importation Réussie!',
-            text: res.warning? res.warning : 'Le fichier a été importé avec succès.',
+            text: res.warning ? res.warning : 'Le fichier a été importé avec succès.',
             icon: 'success',
             confirmButtonText: 'Fermer'
+          }).then(() => {
+            window.location.reload(); // Refresh the page after success
           });
         },
         error: (err) => {
           this.isLoading = false;
-          this.handleError('Une erreur s\'est produite lors de l\'importation du fichier.');
+          this.handleError(err);
         }
       });
     });
@@ -100,13 +109,13 @@ export class BlankComponent implements OnInit {
           onComplete();
         }, 1000); // Small delay after "Finalisation"
       }
-    }, 5000); // 5 seconds between messages
+    }, 4000); // 5 seconds between messages
   }
 
-  private handleError(message: string) {
-    Swal.fire({
+  private handleError(message: any) {
+   Swal.fire({
       title: 'Échec de l\'importation',
-      text: message,
+      text: message.error.message || 'Une erreur s\'est produite lors de l\'importation du fichier.',
       icon: 'error',
       confirmButtonText: 'Fermer'
     });

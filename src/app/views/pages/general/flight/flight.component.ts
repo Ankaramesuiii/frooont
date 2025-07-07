@@ -12,6 +12,9 @@ import { TeamMember } from '../../../../core/models/team.member.model';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { buildMissionFromFlightResponse } from '../../../../core/services/flights/build.mission.from.flight.response';
 import { MissionService } from '../../../../core/services/flights/mission.service';
+import Swal from 'sweetalert2';
+import { MissionModalComponent } from './mission-modal/mission-modal.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-flight',
@@ -20,13 +23,16 @@ import { MissionService } from '../../../../core/services/flights/mission.servic
     CommonModule,
     FormsModule,
     RouterLink,
-    NgSelectModule
+    NgSelectModule,
+    MissionModalComponent,
+    MatExpansionModule,
   ],
   templateUrl: './flight.component.html',
   styleUrls: ['./flight.component.scss'],
   providers: [DatePipe]
 })
 export class FlightComponent implements OnInit {
+  today: string;
   searchParams = {
     departureId: '',
     arrivalId: '',
@@ -49,6 +55,7 @@ export class FlightComponent implements OnInit {
   teamMembers: TeamMember[] = [];
   selectTeamMembers: TeamMember[] = [];
   currencyValue: number;
+  showModal: boolean;
   private readonly TUNISIAN_AIRPORTS = [
     { name: 'Tunis–Carthage International Airport', iataCode: 'TUN' },
     { name: 'Monastir Habib Bourguiba International Airport', iataCode: 'MIR' },
@@ -56,7 +63,8 @@ export class FlightComponent implements OnInit {
     { name: 'Djerba–Zarzis International Airport', iataCode: 'DJE' },
   ];
   returnFlightsMap: Map<string, Flight[]> = new Map(); // Keyed by outbound.flight_id or some unique field
-
+  selectedFlight: any;
+isAccordionOpen: boolean = false;
   constructor(
     private flightService: SerpapiService,
     private datePipe: DatePipe,
@@ -66,6 +74,7 @@ export class FlightComponent implements OnInit {
   ngOnInit(): void {
     this.getTeamMembersName();
     this.getCurrencyValueConverted();
+    this.today = new Date().toISOString().split('T')[0];
   }
 
   getCurrencyValueConverted() {
@@ -124,43 +133,43 @@ export class FlightComponent implements OnInit {
       this.loading = false;
       return;
     }
-  
+
     this.flights = this.getAllFlights(response);
-    
+
     if (this.flights.length === 0) {
       this.error = 'Aucun vol ne correspond...';
       this.loading = false;
       return;
     }
-  
+
     if (!this.isOneWay) {
       const flightsWithToken = this.flights.filter(f => f.departure_token);
-  
+
       if (flightsWithToken.length === 0) {
         this.error = 'Aucune option de retour...';
         this.loading = false;
         return;
       }
-  
+
       const requests = flightsWithToken
         .filter(flight => flight.departure_token)
         .map(flight => this.searchReturnFlights(flight.departure_token!));
-      console.log('requests',requests);
-      
+      console.log('requests', requests);
+
       forkJoin(requests).subscribe({
         next: (responses) => {
           const flightsWithToken = this.flights.filter(f => f.departure_token);
-      
+
           responses.forEach((resp, index) => {
             const outbound = flightsWithToken[index];
             const returns = this.getAllFlights(resp);
             this.returnFlightsMap.set(outbound.departure_token ?? '', returns); // assuming each outbound has a unique id
           });
-      
+
           this.combineFlights();
           this.loading = false;
         },
-      
+
         error: (err) => {
           this.handleReturnFlightError(err);
           this.loading = false;
@@ -181,10 +190,10 @@ export class FlightComponent implements OnInit {
       type: this.isOneWay ? 2 : 1,
       return_date: this.searchParams.returnDate
     };
-  
+
     return this.flightService.searchFlights(params);
   }
-  
+
 
   private handleFlightError(err: any): void {
     this.error = 'Échec de la récupération des données de vol. Veuillez réessayer.';
@@ -198,19 +207,19 @@ export class FlightComponent implements OnInit {
 
   private combineFlights(): void {
     this.combinedFlights = [];
-  
+
     this.flights.forEach(outbound => {
       const matchedReturns = this.returnFlightsMap.get(outbound.departure_token ?? '') || [];
-  
+
       matchedReturns.forEach(returnFlight => {
         this.combinedFlights.push({
           outbound,
           return: returnFlight,
-          totalPrice: Math.max(outbound.price , returnFlight.price), // or Math.max() depending on use case
+          totalPrice: Math.max(outbound.price, returnFlight.price), // or Math.max() depending on use case
         });
       });
     });
-  
+
     this.combinedFlights.sort((a, b) => a.totalPrice - b.totalPrice);
   }
 
@@ -224,9 +233,9 @@ export class FlightComponent implements OnInit {
       // multiply price by currency value
       flight.price = flight.price * this.currencyValue;
     });
-    
+
     console.log('All flights:', flights);
-    
+
     // Remove duplicates by flight number and price
     return flights.filter((flight, index, self) =>
       index === self.findIndex(f =>
@@ -236,23 +245,14 @@ export class FlightComponent implements OnInit {
     );
   }
 
-  selectFlight(flight: any): void {
-    alert(`Flight selected! : ${flight}`);
-    console.log('Selected flight:', flight);
-    console.log('Selected team members:', this.selectTeamMembers);
-    
-    const mission = buildMissionFromFlightResponse(flight, this.selectTeamMembers, "Client visit");
-    this.missionService.createMission(mission).subscribe({
-      next: (response) => {
-        console.log('Mission created successfully:', response);
-        alert('Mission saved successfully!');
-        // Optionally navigate away or reset form
-      },
-      error: (err) => {
-        console.error('Error saving mission:', err);
-        alert('Error saving mission!');
-      }
-    });
+  onMissionCreated(mission: any): void {
+    // Handle the created mission
+    console.log('Mission created from parent:', mission);
+    // You might want to navigate or update the UI
+  }
+  openMissionModal(flight: any): void {
+    this.showModal = true;
+    this.selectedFlight = flight;
   }
 
   onOneWayChange(): void {
@@ -323,7 +323,8 @@ export class FlightComponent implements OnInit {
           }
         },
         error: (error) => {
-          this.error = 'Failed to fetch airport suggestions. Please try again later.';}
+          this.error = 'Failed to fetch airport suggestions. Please try again later.';
+        }
       });
     }
   }
@@ -339,8 +340,8 @@ export class FlightComponent implements OnInit {
             email: member.email,
           }))
           : [];
-          console.log('Team members:', this.teamMembers);
-          
+        console.log('Team members:', this.teamMembers);
+
 
       },
       error: (err) => {

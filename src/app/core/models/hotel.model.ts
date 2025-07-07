@@ -18,3 +18,12 @@ export interface Hotel {
   [key: string]: any;
   
 }
+
+export interface HotelDto {
+  teamMemberIds?: string;
+  name: string;
+  address: string;
+  checkIn: string;
+  checkOut: string;
+  cost: number;
+}

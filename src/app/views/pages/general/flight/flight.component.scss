@@ -135,6 +135,7 @@
       border-radius: 8px;
       padding: 20px;
       margin-bottom: 30px;
+      margin-top: 20px;
       
       .error-content {
         display: flex;
@@ -194,7 +195,7 @@
       }
       
       .flight-header {
-        display: flex;
+        display: flex ;
         justify-content: space-between;
         align-items: center;
         padding: 20px 25px;
@@ -204,6 +205,7 @@
           font-size: 1.8rem;
           font-weight: bold;
           color: #1971c2;
+          
         }
         
         .airline {
@@ -309,7 +311,6 @@
           color: #495057;
           margin-top: 15px;
           padding-top: 15px;
-          border-top: 1px solid #e9ecef;
           font-size: 1.05rem;
         }
       }
@@ -402,7 +403,7 @@
           gap: 15px;
           font-weight: 600;
           font-size: 1.2rem;
-          
+          margin-left: 576px;
           .airline {
             display: flex;
             align-items: center;
@@ -533,7 +534,6 @@
           color: #495057;
           margin-top: 15px;
           padding-top: 15px;
-          border-top: 1px solid #e9ecef;
           font-size: 1.05rem;
         }
       }

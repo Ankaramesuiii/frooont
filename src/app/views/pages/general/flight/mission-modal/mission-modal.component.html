@@ -1,0 +1,229 @@
+<!-- mission-modal.component.html -->
+<div class="modal-overlay" (click)="close()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Créer une Mission</h2>
+      <button class="close-button" (click)="close()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Section Détails du Vol -->
+      <div *ngIf="selectedFlight">
+        <h4>Détails du Vol</h4>
+
+        <!-- Affichage Aller-Retour -->
+        <div *ngIf="selectedFlight.outbound">
+          <div class="flight-section">
+            <h4>Vol Aller</h4>
+            <div class="flight-details">
+              <img
+                [src]="selectedFlight.outbound.airline_logo"
+                alt="Logo Compagnie"
+                class="airline-logo"
+              />
+              <div>
+                <p>
+                  <strong
+                    >{{ selectedFlight.outbound.flights[0].airline }}
+                    {{
+                      selectedFlight.outbound.flights[0].flight_number
+                    }}</strong
+                  >
+                </p>
+                <p>
+                  {{
+                    selectedFlight.outbound.flights[0].departure_airport.name
+                  }}
+                  ({{
+                    selectedFlight.outbound.flights[0].departure_airport.id
+                  }}) →
+                  {{
+                    selectedFlight.outbound.flights[0].arrival_airport.name
+                  }}
+                  ({{ selectedFlight.outbound.flights[0].arrival_airport.id }})
+                </p>
+                <p>
+                  <strong>Départ :</strong>
+                  {{
+                    selectedFlight.outbound.flights[0].departure_airport.time
+                      | date : "medium"
+                  }}
+                </p>
+                <p>
+                  <strong>Arrivée :</strong>
+                  {{
+                    selectedFlight.outbound.flights[0].arrival_airport.time
+                      | date : "medium"
+                  }}
+                </p>
+                <p>
+                  <strong>Durée :</strong>
+                  {{ selectedFlight.outbound.flights[0].duration }} minutes
+                </p>
+                <p>
+                  <strong>Appareil :</strong>
+                  {{ selectedFlight.outbound.flights[0].airplane }}
+                </p>
+                <p>
+                  <strong>Classe :</strong>
+                  {{ selectedFlight.outbound.flights[0].travel_class }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="flight-section" *ngIf="selectedFlight.return">
+            <h4>Vol Retour</h4>
+            <div class="flight-details">
+              <img
+                [src]="selectedFlight.return.airline_logo"
+                alt="Logo Compagnie"
+                class="airline-logo"
+              />
+              <div>
+                <p>
+                  <strong
+                    >{{ selectedFlight.return.flights[0].airline }}
+                    {{ selectedFlight.return.flights[0].flight_number }}</strong
+                  >
+                </p>
+                <p>
+                  {{
+                    selectedFlight.return.flights[0].departure_airport.name
+                  }}
+                  ({{ selectedFlight.return.flights[0].departure_airport.id }})
+                  →
+                  {{
+                    selectedFlight.return.flights[0].arrival_airport.name
+                  }}
+                  ({{ selectedFlight.return.flights[0].arrival_airport.id }})
+                </p>
+                <p>
+                  <strong>Départ :</strong>
+                  {{
+                    selectedFlight.return.flights[0].departure_airport.time
+                      | date : "medium"
+                  }}
+                </p>
+                <p>
+                  <strong>Arrivée :</strong>
+                  {{
+                    selectedFlight.return.flights[0].arrival_airport.time
+                      | date : "medium"
+                  }}
+                </p>
+                <p>
+                  <strong>Durée :</strong>
+                  {{ selectedFlight.return.flights[0].duration }} minutes
+                </p>
+                <p>
+                  <strong>Appareil :</strong>
+                  {{ selectedFlight.return.flights[0].airplane }}
+                </p>
+                <p>
+                  <strong>Classe :</strong>
+                  {{ selectedFlight.return.flights[0].travel_class }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Affichage Vol Simple -->
+        <div *ngIf="!selectedFlight.outbound">
+          <div class="flight-details">
+            <img
+              [src]="selectedFlight.airline_logo"
+              alt="Logo Compagnie"
+              class="airline-logo"
+            />
+            <div>
+              <p>
+                <strong
+                  >{{ selectedFlight.flights[0].airline }}
+                  {{ selectedFlight.flights[0].flight_number }}</strong
+                >
+              </p>
+              <p>
+                {{ selectedFlight.flights[0].departure_airport.name }} ({{
+                  selectedFlight.flights[0].departure_airport.id
+                }}) → {{ selectedFlight.flights[0].arrival_airport.name }} ({{
+                  selectedFlight.flights[0].arrival_airport.id
+                }})
+              </p>
+              <p>
+                <strong>Départ :</strong>
+                {{
+                  selectedFlight.flights[0].departure_airport.time
+                    | date : "medium"
+                }}
+              </p>
+              <p>
+                <strong>Arrivée :</strong>
+                {{
+                  selectedFlight.flights[0].arrival_airport.time
+                    | date : "medium"
+                }}
+              </p>
+              <p>
+                <strong>Durée :</strong>
+                {{ selectedFlight.flights[0].duration }} minutes
+              </p>
+              <p>
+                <strong>Appareil :</strong>
+                {{ selectedFlight.flights[0].airplane }}
+              </p>
+              <p>
+                <strong>Classe :</strong>
+                {{ selectedFlight.flights[0].travel_class }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flight-info">
+          <p>
+            <strong>Prix total :</strong>
+            {{
+              selectedFlight.totalPrice || selectedFlight.price
+                | currency : "TND"
+            }}
+          </p>
+          <p>
+            <strong>Émissions CO₂ :</strong>
+            {{
+              (selectedFlight.outbound?.carbon_emissions?.this_flight ||
+                selectedFlight.carbon_emissions?.this_flight) / 1000
+            }}
+            kg
+          </p>
+        </div>
+      </div>
+
+      <div *ngIf="selectedTeamMembers?.length">
+        <h4>Membres de l'Équipe</h4>
+        <ul>
+          <li *ngFor="let member of selectedTeamMembers">{{ member.name }}</li>
+        </ul>
+      </div>
+
+      <div class="form-group">
+        <label for="missionType">Type de Mission :</label>
+        <select id="missionType" #missionTypeSelect class="form-control">
+          <option value="Client visit">Visite Client</option>
+          <option value="Conference">Conférence</option>
+          <option value="PI Planning">PI Planning</option>
+        </select>
+      </div>
+
+      <div class="form-footer">
+        <button
+          class="btn btn-primary"
+          (click)="createMission(missionTypeSelect.value)"
+        >
+          Créer la Mission
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

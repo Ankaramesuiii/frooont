@@ -353,3 +353,26 @@
     transform: rotate(360deg);
   }
 }
+
+.hotel-footer {
+        padding: 15px 25px;
+        display: flex;
+        justify-content: flex-end;
+        
+        .select-button {
+          padding: 10px 20px;
+          background-color: #2b8a3e;
+          color: white;
+          border: none;
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border-radius: 6px;
+          min-width: 120px;
+          
+          &:hover {
+            background-color: #247a34;
+          }
+        }
+      }

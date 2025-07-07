@@ -1,0 +1,45 @@
+<div class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>{{ hotel.name }}</h2>
+      <button class="close-button" (click)="onClose()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="hotel-info">
+        <div class="rating">
+          <span class="stars">★★★★★</span>
+          <span class="score">{{ hotel.overall_rating }} ({{ hotel.reviews }} avis)</span>
+        </div>
+        
+        <p class="description">{{ hotel.description }}</p>
+        
+        <div class="price">
+          <span class="rate">{{ hotel.rate_per_night.lowest }}</span>
+          <span class="total">Total: {{ hotel.total_rate.lowest }}</span>
+        </div>
+        
+        <div class="amenities">
+          <h4>Amenities:</h4>
+          <ul>
+            <li *ngFor="let amenity of hotel.amenities">{{ amenity }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="team-members">
+        <h3>Selected Team Members</h3>
+        <ul>
+          <li *ngFor="let member of teamMembers">
+            {{ member.name }} ({{ member.email }})
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="onHotelCreated(hotel)">Confirmer</button>
+      <button class="btn btn-secondary" (click)="onClose()">Annuler</button>
+    </div>
+  </div>
+</div>

@@ -79,6 +79,7 @@
               [(ngModel)]="searchParams.outboundDate"
               name="outboundDate"
               required
+              [attr.min]="today"
             />
           </div>
 
@@ -90,6 +91,7 @@
               [(ngModel)]="searchParams.returnDate"
               name="returnDate"
               [min]="searchParams.outboundDate"
+              [attr.min]="today"
             />
           </div>
 
@@ -161,262 +163,328 @@
     <h2>Vols Disponibles</h2>
 
     <div class="flight-card" *ngFor="let flight of flights">
-      <div class="flight-header">
-        <div class="price">{{ flight.price | currency : "TND" }}</div>
-        <div class="airline">
-          <img
-            [src]="flight.airline_logo"
-            *ngIf="flight.airline_logo"
-            class="airline-logo"
-          />
-          {{ flight.flights[0].airline }}
-        </div>
-      </div>
+      <mat-accordion *ngIf="flight">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <div class="flight-header">
+                <div class="price">{{ flight.price | currency : "TND" }}</div>
+                <div class="airline">
+                  <img
+                    [src]="flight.airline_logo"
+                    *ngIf="flight.airline_logo"
+                    class="airline-logo"
+                  />
+                  {{
+                    flight.flights[0].airline.length > 12
+                      ? (flight.flights[0].airline | slice : 0 : 10) + "..."
+                      : flight.flights[0].airline
+                  }}
+                </div>
+              </div>
 
-      <div class="divider"></div>
+              <div class="divider"></div>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
 
-      <div class="flight-details">
-        <div
-          class="segment"
-          *ngFor="let segment of flight.flights; let i = index"
-        >
-          <div class="segment-header">
-            <span *ngIf="i > 0">Correspondance {{ i }}</span>
-            <span class="duration">{{ formatDuration(segment.duration) }}</span>
+          <div class="divider"></div>
+
+          <div class="flight-details">
+            <div
+              class="segment"
+              *ngFor="let segment of flight.flights; let i = index"
+            >
+              <div class="segment-header">
+                <span *ngIf="i > 0">Correspondance {{ i }}</span>
+                <span class="duration">{{
+                  formatDuration(segment.duration)
+                }}</span>
+              </div>
+
+              <div class="segment-details">
+                <div class="route">
+                  <span class="city">{{ segment.departure_airport.id }}</span>
+                  <span class="time">{{
+                    formatTime(segment.departure_airport.time)
+                  }}</span>
+                  →
+                  <span class="city">{{ segment.arrival_airport.id }}</span>
+                  <span class="time">{{
+                    formatTime(segment.arrival_airport.time)
+                  }}</span>
+                </div>
+                <div class="flight-info">
+                  <span>{{ segment.airline }} {{ segment.flight_number }}</span>
+                  <span>{{ segment.airplane }}</span>
+                  <span *ngIf="segment.legroom">({{ segment.legroom }})</span>
+                </div>
+                <div class="extensions" *ngIf="segment.extensions?.length">
+                  <div
+                    class="extension-tag"
+                    *ngFor="let ext of segment.extensions"
+                  >
+                    {{ ext }}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="layover"
+                *ngIf="i < flight.flights.length - 1 && flight.layovers"
+              >
+                <div class="layover-details">
+                  <span
+                    >⏱️ Escale à {{ flight.layovers[i].name }} ({{
+                      flight.layovers[i].id
+                    }})</span
+                  >
+                  <span>{{ formatDuration(flight.layovers[i].duration) }}</span>
+                  <span *ngIf="flight.layovers[i].overnight" class="overnight"
+                    >(Nuit)</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="total-duration">
+              Durée totale : {{ formatDuration(flight.total_duration) }}
+            </div>
           </div>
 
-          <div class="segment-details">
-            <div class="route">
-              <span class="city">{{ segment.departure_airport.id }}</span>
-              <span class="time">{{
-                formatTime(segment.departure_airport.time)
-              }}</span>
-              →
-              <span class="city">{{ segment.arrival_airport.id }}</span>
-              <span class="time">{{
-                formatTime(segment.arrival_airport.time)
-              }}</span>
-            </div>
-            <div class="flight-info">
-              <span>{{ segment.airline }} {{ segment.flight_number }}</span>
-              <span>{{ segment.airplane }}</span>
-              <span *ngIf="segment.legroom">({{ segment.legroom }})</span>
-            </div>
-            <div class="extensions" *ngIf="segment.extensions?.length">
-              <div class="extension-tag" *ngFor="let ext of segment.extensions">
-                {{ ext }}
+          <div class="flight-extensions" *ngIf="flight.extensions?.length">
+            <div class="flight-extensions">
+              <div class="extension" *ngFor="let ext of flight.extensions">
+                🛈 {{ ext }}
               </div>
             </div>
           </div>
-
-          <div
-            class="layover"
-            *ngIf="i < flight.flights.length - 1 && flight.layovers"
-          >
-            <div class="layover-details">
-              <span
-                >⏱️ Escale à {{ flight.layovers[i].name }} ({{
-                  flight.layovers[i].id
-                }})</span
-              >
-              <span>{{ formatDuration(flight.layovers[i].duration) }}</span>
-              <span *ngIf="flight.layovers[i].overnight" class="overnight"
-                >(Nuit)</span
-              >
-            </div>
+          <div class="flight-footer">
+            <button class="select-button" (click)="openMissionModal(flight)">
+              Sélectionner
+            </button>
           </div>
-        </div>
-
-        <div class="total-duration">
-          Durée totale : {{ formatDuration(flight.total_duration) }}
-        </div>
-      </div>
-
-      <div class="flight-extensions" *ngIf="flight.extensions?.length">
-        <div class="extension" *ngFor="let ext of flight.extensions">
-          ℹ️ {{ ext }}
-        </div>
-      </div>
-      <div class="flight-footer">
-        <button class="select-button" (click)="selectFlight(flight)">
-          Sélectionner
-        </button>
-      </div>
+        </mat-expansion-panel>
+      </mat-accordion>
     </div>
   </div>
 
   <!-- Affichage des vols aller-retour -->
   <div class="flight-results" *ngIf="combinedFlights.length > 0 && !isOneWay">
     <h2>Vols Aller-Retour Disponibles</h2>
-{{combinedFlights.length}}
     <div class="round-trip-card" *ngFor="let trip of combinedFlights">
-      <div class="trip-header">
-        <div class="total-price">
-          {{ trip.totalPrice | currency : "TND" }}
-        </div>
-        <div class="trip-summary">
-          <div class="airline">
-            <img
-              [src]="trip.outbound.airline_logo"
-              *ngIf="trip.outbound.airline_logo"
-              class="airline-logo"
-            />
-            {{ trip.outbound.flights[0].airline }}
-          </div>
-          /
-          <div class="airline">
-            <img
-              [src]="trip.return.airline_logo"
-              *ngIf="trip.return.airline_logo"
-              class="airline-logo"
-            />
-            {{ trip.return.flights[0].airline }}
-          </div>
-        </div>
-      </div>
-
-      <!-- Vol aller -->
-      <div class="flight-section outbound">
-        <h3>Vol Aller</h3>
-        <div class="flight-details">
-          <div
-            class="segment"
-            *ngFor="let segment of trip.outbound.flights; let i = index"
-          >
-            <div class="segment-header">
-              <span *ngIf="i > 0">Correspondance {{ i }}</span>
-              <span class="duration">{{
-                formatDuration(segment.duration)
-              }}</span>
-            </div>
-
-            <div class="segment-details">
-              <div class="route">
-                <span class="city">{{ segment.departure_airport.id }}</span>
-                <span class="time">{{
-                  formatTime(segment.departure_airport.time)
-                }}</span>
-                →
-                <span class="city">{{ segment.arrival_airport.id }}</span>
-                <span class="time">{{
-                  formatTime(segment.arrival_airport.time)
-                }}</span>
+      <mat-accordion *ngIf="trip">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <div class="trip-header">
+                <div class="total-price">
+                  {{ trip.totalPrice | currency : "TND" }}
+                </div>
+                <div class="trip-summary">
+                  <div class="airline">
+                    <img
+                      [src]="trip.outbound.airline_logo"
+                      *ngIf="trip.outbound.airline_logo"
+                      class="airline-logo"
+                    />
+                    {{
+                      trip.outbound.flights[0].airline.length > 12
+                        ? (trip.outbound.flights[0].airline | slice : 0 : 10) +
+                          "..."
+                        : trip.outbound.flights[0].airline
+                    }}
+                  </div>
+                  /
+                  <div class="airline">
+                    <img
+                      [src]="trip.return.airline_logo"
+                      *ngIf="trip.return.airline_logo"
+                      class="airline-logo"
+                    />
+                    {{
+                      trip.return.flights[0].airline.length > 12
+                        ? (trip.return.flights[0].airline | slice : 0 : 10) +
+                          "..."
+                        : trip.return.flights[0].airline
+                    }}
+                  </div>
+                </div>
               </div>
-              <div class="flight-info">
-                <span>{{ segment.airline }} {{ segment.flight_number }}</span>
-                <span>{{ segment.airplane }}</span>
-                <span *ngIf="segment.legroom">({{ segment.legroom }})</span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <!-- Vol aller -->
+          <div class="flight-section outbound">
+            <h3>Vol Aller</h3>
+            <div class="flight-details">
+              <div
+                class="segment"
+                *ngFor="let segment of trip.outbound.flights; let i = index"
+              >
+                <div class="segment-header">
+                  <span *ngIf="i > 0">Correspondance {{ i }}</span>
+                  <span class="duration">{{
+                    formatDuration(segment.duration)
+                  }}</span>
+                </div>
+
+                <div class="segment-details">
+                  <div class="route">
+                    <span class="city">{{ segment.departure_airport.id }}</span>
+                    <span class="time">{{
+                      formatTime(segment.departure_airport.time)
+                    }}</span>
+                    →
+                    <span class="city">{{ segment.arrival_airport.id }}</span>
+                    <span class="time">{{
+                      formatTime(segment.arrival_airport.time)
+                    }}</span>
+                  </div>
+                  <div class="flight-info">
+                    <span
+                      >{{ segment.airline }} {{ segment.flight_number }}</span
+                    >
+                    <span>{{ segment.airplane }}</span>
+                    <span *ngIf="segment.legroom">({{ segment.legroom }})</span>
+                  </div>
+                </div>
+
+                <div
+                  class="layover"
+                  *ngIf="
+                    i < trip.outbound.flights.length - 1 &&
+                    trip.outbound.layovers
+                  "
+                >
+                  <div class="layover-details">
+                    <span
+                      >⏱️ Escale à {{ trip.outbound.layovers[i].name }} ({{
+                        trip.outbound.layovers[i].id
+                      }})</span
+                    >
+                    <span>{{
+                      formatDuration(trip.outbound.layovers[i].duration)
+                    }}</span>
+                    <span
+                      *ngIf="trip.outbound.layovers[i].overnight"
+                      class="overnight"
+                      >(Nuit)</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <div class="total-duration">
+                Durée totale :
+                {{ formatDuration(trip.outbound.total_duration) }}
               </div>
             </div>
 
             <div
-              class="layover"
-              *ngIf="
-                i < trip.outbound.flights.length - 1 && trip.outbound.layovers
-              "
+              class="flight-extensions"
+              *ngIf="trip.outbound.extensions?.length"
             >
-              <div class="layover-details">
-                <span
-                  >⏱️ Escale à {{ trip.outbound.layovers[i].name }} ({{
-                    trip.outbound.layovers[i].id
-                  }})</span
-                >
-                <span>{{
-                  formatDuration(trip.outbound.layovers[i].duration)
-                }}</span>
-                <span
-                  *ngIf="trip.outbound.layovers[i].overnight"
-                  class="overnight"
-                  >(Nuit)</span
-                >
+              <div
+                class="extension"
+                *ngFor="let ext of trip.outbound.extensions"
+              >
+                🛈 {{ ext }}
               </div>
             </div>
           </div>
 
-          <div class="total-duration">
-            Durée totale : {{ formatDuration(trip.outbound.total_duration) }}
-          </div>
-        </div>
+          <!-- Vol retour -->
+          <div class="flight-section return">
+            <h3>Vol Retour</h3>
+            <div class="flight-details">
+              <div
+                class="segment"
+                *ngFor="let segment of trip.return.flights; let i = index"
+              >
+                <div class="segment-header">
+                  <span *ngIf="i > 0">Correspondance {{ i }}</span>
+                  <span class="duration">{{
+                    formatDuration(segment.duration)
+                  }}</span>
+                </div>
 
-        <div class="flight-extensions" *ngIf="trip.outbound.extensions?.length">
-          <div class="extension" *ngFor="let ext of trip.outbound.extensions">
-            🛈 {{ ext }}
-          </div>
-        </div>
-      </div>
+                <div class="segment-details">
+                  <div class="route">
+                    <span class="city">{{ segment.departure_airport.id }}</span>
+                    <span class="time">{{
+                      formatTime(segment.departure_airport.time)
+                    }}</span>
+                    →
+                    <span class="city">{{ segment.arrival_airport.id }}</span>
+                    <span class="time">{{
+                      formatTime(segment.arrival_airport.time)
+                    }}</span>
+                  </div>
+                  <div class="flight-info">
+                    <span
+                      >{{ segment.airline }} {{ segment.flight_number }}</span
+                    >
+                    <span>{{ segment.airplane }}</span>
+                    <span *ngIf="segment.legroom">({{ segment.legroom }})</span>
+                  </div>
+                </div>
 
-      <!-- Vol retour -->
-      <div class="flight-section return">
-        <h3>Vol Retour</h3>
-        <div class="flight-details">
-          <div
-            class="segment"
-            *ngFor="let segment of trip.return.flights; let i = index"
-          >
-            <div class="segment-header">
-              <span *ngIf="i > 0">Correspondance {{ i }}</span>
-              <span class="duration">{{
-                formatDuration(segment.duration)
-              }}</span>
-            </div>
-
-            <div class="segment-details">
-              <div class="route">
-                <span class="city">{{ segment.departure_airport.id }}</span>
-                <span class="time">{{
-                  formatTime(segment.departure_airport.time)
-                }}</span>
-                →
-                <span class="city">{{ segment.arrival_airport.id }}</span>
-                <span class="time">{{
-                  formatTime(segment.arrival_airport.time)
-                }}</span>
+                <div
+                  class="layover"
+                  *ngIf="
+                    i < trip.return.flights.length - 1 && trip.return.layovers
+                  "
+                >
+                  <div class="layover-details">
+                    <span
+                      >⏱️ Escale à {{ trip.return.layovers[i].name }} ({{
+                        trip.return.layovers[i].id
+                      }})</span
+                    >
+                    <span>{{
+                      formatDuration(trip.return.layovers[i].duration)
+                    }}</span>
+                    <span
+                      *ngIf="trip.return.layovers[i].overnight"
+                      class="overnight"
+                      >(Nuit)</span
+                    >
+                  </div>
+                </div>
               </div>
-              <div class="flight-info">
-                <span>{{ segment.airline }} {{ segment.flight_number }}</span>
-                <span>{{ segment.airplane }}</span>
-                <span *ngIf="segment.legroom">({{ segment.legroom }})</span>
+
+              <div class="total-duration">
+                Durée totale : {{ formatDuration(trip.return.total_duration) }}
               </div>
             </div>
 
             <div
-              class="layover"
-              *ngIf="i < trip.return.flights.length - 1 && trip.return.layovers"
+              class="flight-extensions"
+              *ngIf="trip.return.extensions?.length"
             >
-              <div class="layover-details">
-                <span
-                  >⏱️ Escale à {{ trip.return.layovers[i].name }} ({{
-                    trip.return.layovers[i].id
-                  }})</span
-                >
-                <span>{{
-                  formatDuration(trip.return.layovers[i].duration)
-                }}</span>
-                <span
-                  *ngIf="trip.return.layovers[i].overnight"
-                  class="overnight"
-                  >(Nuit)</span
-                >
+              <div
+                class="extension-tag"
+                *ngFor="let ext of trip.return.extensions"
+              >
+                ℹ️ {{ ext }}
               </div>
             </div>
           </div>
-
-          <div class="total-duration">
-            Durée totale : {{ formatDuration(trip.return.total_duration) }}
+          <div class="flight-footer">
+            <button class="select-button" (click)="openMissionModal(trip)">
+              Sélectionner
+            </button>
           </div>
-        </div>
-
-        <div class="flight-extensions" *ngIf="trip.return.extensions?.length">
-          <div class="extension" *ngFor="let ext of trip.return.extensions">
-            ℹ️ {{ ext }}
-          </div>
-        </div>
-      </div>
-      <div class="flight-footer">
-        <button class="select-button" (click)="selectFlight(trip)">
-          Sélectionner
-        </button>
-      </div>
+        </mat-expansion-panel>
+      </mat-accordion>
     </div>
   </div>
 </div>
+<app-mission-modal
+  *ngIf="showModal"
+  [selectedFlight]="selectedFlight"
+  [selectedTeamMembers]="selectTeamMembers"
+  (missionCreated)="onMissionCreated($event)"
+  (closed)="showModal = false"
+>
+</app-mission-modal>

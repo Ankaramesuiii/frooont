@@ -13,16 +13,20 @@ import { RouterLink } from '@angular/router';
 import { ConvertPricePipe } from '../../../../core/pipes/convert-price.pipe';
 import { TeamMember } from '../../../../core/models/team.member.model';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { HotelMapModalComponent } from "./hotel-map-modal/hotel-map-modal.component";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-hotel-map',
   standalone: true,
   templateUrl: './hotel-map.component.html',
   styleUrls: ['./hotel-map.component.scss'],
-  imports: [CommonModule, LeafletModule, ReactiveFormsModule, NgSelectModule, FormsModule, FontAwesomeModule, RouterLink, ConvertPricePipe],
+  imports: [CommonModule, LeafletModule, ReactiveFormsModule, NgSelectModule, FormsModule, FontAwesomeModule, RouterLink, ConvertPricePipe, HotelMapModalComponent],
   schemas: [NO_ERRORS_SCHEMA]
 })
 export class HotelMapComponent implements OnInit, OnDestroy {
+showModal: boolean;
+today: string;
   searchForm: FormGroup;
   hotels: Hotel[] = [];
   selectedHotel?: Hotel;
@@ -79,8 +83,10 @@ export class HotelMapComponent implements OnInit, OnDestroy {
   teamMembers: TeamMember[] = [];
   selectTeamMembers: TeamMember[] = [];
   adress: any;
-
-  constructor(private fb: FormBuilder, private hotelService: SerpapiService, private sanitize: DomSanitizer) {
+  errorMsg: string;
+  checkOut: string;
+  checkIn: string;
+  constructor(private fb: FormBuilder, private hotelService: SerpapiService, private sanitize: DomSanitizer,private modalService: NgbModal) {
     this.searchForm = this.fb.group({
       q: [],
       check_in_date: [new Date().toISOString().split('T')[0]],
@@ -93,6 +99,7 @@ export class HotelMapComponent implements OnInit, OnDestroy {
     this.initMap();
     this.getCurrencyValueConverted();
     this.getTeamMembersName();
+    this.today = new Date().toISOString().split('T')[0];
     //this.loadHotels();
   }
 
@@ -107,9 +114,11 @@ export class HotelMapComponent implements OnInit, OnDestroy {
       next: (response) => {
         console.log('Converted amount:', response);
         this.currencyValue = response;
+        localStorage.setItem('currencyValue', this.currencyValue.toString());
       },
       error: (err) => {
         this.error = true;
+        this.errorMsg = 'Erreur lors de la récupération du taux de change.';
       }
     });
   }
@@ -143,51 +152,54 @@ export class HotelMapComponent implements OnInit, OnDestroy {
 
     const formValue = this.searchForm.value;
     const params = {
-        q: formValue.q,
-        check_in_date: formValue.check_in_date,
-        check_out_date: formValue.check_out_date,
-        adults: formValue.teamMembers?.length || 1
+      q: formValue.q,
+      check_in_date: formValue.check_in_date,
+      check_out_date: formValue.check_out_date,
+      adults: formValue.teamMembers?.length || 1
     };
 
     this.hotelService.searchHotels(params).subscribe({
-        next: (response) => {
-            this.loading = false;
-            if (response?.length > 0) {
-                this.hotels = response.filter(hotel => hotel.type === 'hotel');
-                this.selectedHotel = this.hotels[0];
-                this.updateMarkers();
+      next: (response) => {
+        this.loading = false;
+        if (response?.length > 0) {
+          this.hotels = response.filter(hotel => hotel.type === 'hotel');
+          this.selectedHotel = this.hotels[0];
+          this.updateMarkers();
 
-                // Check if hotels[0] exists and has the property you need
-                if (this.hotels[0]?.property_token) {
-                    const secondParams = {
-                        ...params, // Include original params
-                        property_token: this.hotels[0].property_token // Add the property from the first hotel
-                    };
+          // Check if hotels[0] exists and has the property you need
+          if (this.hotels[0]?.property_token) {
+            const secondParams = {
+              ...params, // Include original params
+              property_token: this.hotels[0].property_token // Add the property from the first hotel
+            };
 
-                    this.hotelService.searchHotelsData(secondParams).subscribe({
-                        next: (response) => {
-                            this.adress = response.address;
-                        },
-                        error: (err) => {
-                            console.log('Error in secondary request:', err);
-                        }
-                    });
-                }
-            } else {
+            this.hotelService.searchHotelsData(secondParams).subscribe({
+              next: (response) => {
+                this.adress = response.address;
+              },
+              error: (err) => {
                 this.error = true;
-                this.clearHotelMarkersOnly();
-            }
-        },
-        error: (err) => {
-            this.hotels = [];
-            this.selectedHotel = undefined;
-            this.loading = false;
-            this.error = true;
-            this.clearHotelMarkersOnly();
-            console.error('Error loading hotels:', err);
+                this.errorMsg = 'Erreur lors de la récupération des données de l\'hôtel.';
+              }
+            });
+          }
+        } else {
+          this.error = true;
+          this.errorMsg = 'Aucun hôtel trouvé pour cette recherche.';
+          this.clearHotelMarkersOnly();
         }
+      },
+      error: (err) => {
+        this.hotels = [];
+        this.selectedHotel = undefined;
+        this.loading = false;
+        this.error = true;
+        this.clearHotelMarkersOnly();
+        this.errorMsg = 'Erreur lors de la récupération des hôtels. Veuillez réessayer plus tard.';
+        console.error('Error loading hotels:', err);
+      }
     });
-}
+  }
   updateMarkers() {
     this.clearHotelMarkersOnly();
     this.hotels.forEach(hotel => {
@@ -240,13 +252,17 @@ export class HotelMapComponent implements OnInit, OnDestroy {
       adults: formValue.teamMembers?.length,
       property_token: hotel.property_token
     };
+    console.log(params);
+
     this.hotelService.searchHotelsData(params).subscribe({
       next: (response) => {
         this.adress = response.address
       },
       error: (err) => {
-       console.log(err);
-       
+        console.log(err);
+        this.error = true;
+        this.errorMsg = 'Erreur lors de la récupération des données de l\'hôtel.';
+
       }
     });
     this.map.setView(coords, 14);
@@ -285,7 +301,8 @@ export class HotelMapComponent implements OnInit, OnDestroy {
   }
 
   handleImageError(event: Event) {
-    console.log(event);
+    const target = event.target as HTMLImageElement;
+    target.src = '/images/no-image-found.jpeg'; // Default image path
   }
 
 
@@ -334,11 +351,11 @@ export class HotelMapComponent implements OnInit, OnDestroy {
 
   getCleanPrice(price: string): number {
     // Remove any non-numeric characters (except for the decimal point)
-    return parseFloat(price.replace(/\$|\s/g, ''));
+    return parseFloat(price?.replace(/\$|\s/g, ''));
   }
 
   getConvertedPrice(hotel: Hotel): number {
-    return parseFloat((this.getCleanPrice(hotel.total_rate.lowest) * this.currencyValue).toFixed(2));
+    return parseFloat((this.getCleanPrice(hotel?.total_rate?.lowest) * this.currencyValue).toFixed(2));
   }
 
   clearHotelMarkersOnly() {
@@ -377,8 +394,39 @@ export class HotelMapComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.error = true;
+        this.errorMsg = 'Erreur lors de la récupération des membres de l\'équipe.';
+
       }
     });
   }
+
+  openHotelModal(hotel: Hotel) {
+    const formValue = this.searchForm.value;
+    const modalRef = this.modalService.open(HotelMapModalComponent, {
+      centered: true,
+      keyboard: true,
+      size: 'xl',
+    });
+    const component: HotelMapModalComponent = modalRef.componentInstance;
+    component.hotel = hotel;
+    component.checkInDate = formValue.check_in_date;
+    component.checkOutDate = formValue.check_out_date;
+    component.teamMembers = formValue.teamMembers
+ 
+    modalRef.result
+      .then(
+        (acoForm) => {
+         
+          console.log(acoForm);
+        }
+      )
+      .catch(() => {});
+  }
+  
+
+  onHotelSelected(hotel: any) {
+    console.log('hotel selected suiii:', hotel);
+  }
+    
 }
 

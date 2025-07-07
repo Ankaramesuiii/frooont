@@ -9,12 +9,12 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root'
 })
 export class MissionService {
-  private apiUrl = environment.missionUrl; 
+  private apiUrl = environment.missionUrl;
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   createMission(mission: any): Observable<any> {
-    return this.http.post(this.apiUrl,mission, {
+    return this.http.post(this.apiUrl, mission, {
       headers: this.authService.getHeaders()
     });
   }
