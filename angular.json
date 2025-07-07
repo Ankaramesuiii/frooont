@@ -23,7 +23,8 @@
               "sweetalert2",
               "apexcharts",
               "quill-delta",
-              "dropzone"
+              "dropzone",
+              "leaflet"
             ],
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -57,8 +58,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "10kb",
+                  "maximumError": "15kb"
                 }
               ],
               "outputHashing": "all"
@@ -105,7 +106,6 @@
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss",
-              
               "./node_modules/@fortawesome/fontawesome-free/css/all.css"
             ],
             "scripts": []
