@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MissionModalComponent } from './mission-modal.component';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('MissionModalComponent', () => {
   let component: MissionModalComponent;
@@ -8,7 +10,9 @@ describe('MissionModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MissionModalComponent]
+      imports: [MissionModalComponent],
+      providers: [provideHttpClient(), // Provide the HttpClient along with HttpClientTesting
+              provideHttpClientTesting()]
     })
     .compileComponents();
 
