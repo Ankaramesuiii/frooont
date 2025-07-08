@@ -69,4 +69,4 @@ jobs:
           action: "upload"
           app_location: "/" # Adjust if app is not in root
           api_location: ""
-          output_location: "dist/demo1"
+          output_location: "dist/demo1/browser" # Adjust based on your build output directory
