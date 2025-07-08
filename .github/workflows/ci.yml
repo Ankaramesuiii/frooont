@@ -69,4 +69,4 @@ jobs:
           action: "upload"
           app_location: "/" # Adjust if app is not in root
           api_location: ""
-          output_location: "dist/reporting-assistant-worklist"
+          output_location: "dist/demo1"
