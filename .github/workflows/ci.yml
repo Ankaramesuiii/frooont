@@ -76,9 +76,6 @@ jobs:
         with:
           name: angular-dist
 
-      - name: Zip Angular dist folder
-        run: cd dist/demo1 && zip -r ../../release.zip .
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -92,4 +89,4 @@ jobs:
         with:
           app-name: 'ihm-budget'
           slot-name: 'Production'
-          package: release.zip
+          package: 'dist/demo1/browser'
