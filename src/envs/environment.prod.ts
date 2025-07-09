@@ -1,7 +1,15 @@
 export const environment = {
     production: true,
-    authUrl: '/api/auth/',
-    managerUrl: '/api/manager/',
-    uploadData: '/api/training/',
-    userDataUrl: '/api/user/'
+    authUrl: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/auth/',
+    managerUrl: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/manager/',
+    uploadData: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/training/',
+    uploadBudget: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/training/upload-budgets',
+    userDataUrl: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/user/',
+    serpApiFlightUrl: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/serpapi/flights/search',
+    serpApiHotelUrl: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/serpapi/hotels/search',
+    calendarTrainingUrl: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/user/training',
+    profileUrl: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/user/profile',
+    teamMembersNameUrl: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/user/team-members',
+    exchangerateApiKey: 'cur_live_umqer7vKD6LVGydlBhhApzjGahEAG1ZIOWDKGEwV',
+    missionUrl: 'https://api-budget-bygwcfa7htbzgycu.francecentral-01.azurewebsites.net/api/missions',
 };
