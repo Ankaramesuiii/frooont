@@ -77,8 +77,7 @@ jobs:
           name: angular-dist
 
       - name: Zip Angular dist folder
-        run: cd dist/demo1/browser
-             zip -r ../../../../release.zip  # zip all dist files into release.zip
+        run: cd dist/demo1/browser && zip -r ../../../../release.zip .
 
       - name: Login to Azure
         uses: azure/login@v2
