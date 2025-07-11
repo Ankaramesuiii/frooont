@@ -89,4 +89,4 @@ jobs:
         with:
           app-name: 'ihm-budget'
           slot-name: 'Production'
-          package: 'dist/demo1/browser'
+          package: 'dist/demo1'
