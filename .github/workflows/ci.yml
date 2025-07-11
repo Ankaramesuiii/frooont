@@ -83,6 +83,14 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_45862DE67AA048D7B3351D926C97417D }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_1928B1A8995C4ACAB9F797FA21227E18 }}
 
+      - name: Add staticwebapp.config.json for routing
+        run: |
+          echo '{
+            "navigationFallback": {
+              "rewrite": "/index.html"
+            }
+          }' > staticwebapp.config.json
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -90,3 +98,5 @@ jobs:
           app-name: 'ihm-budget'
           slot-name: 'Production'
           package: '.'
+
+      
