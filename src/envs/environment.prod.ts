@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    authUrl: 'https://api-budget.azurewebsites.net/api/auth/',
+    authUrl: '/api/auth/',
     managerUrl: 'https://api-budget.azurewebsites.net/api/manager/',
     uploadData: 'https://api-budget.azurewebsites.net/api/training/',
     uploadBudget: 'https://api-budget.azurewebsites.net/api/training/upload-budgets',

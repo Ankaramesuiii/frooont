@@ -1,10 +1,7 @@
 {
   "/api": {
     "target": "https://api-budget.azurewebsites.net",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": {
-      "^/api": ""
-    }
+    "secure": false,
+    "changeOrigin": true
   }
 }
