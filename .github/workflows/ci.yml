@@ -30,7 +30,6 @@ jobs:
       - name: Build Angular project (prod)
         run: |
           npm run build -- --configuration production
-          cp proxy.prod.conf.json dist/demo1/browser/proxy.conf.json
           cp staticwebapp.config.json dist/demo1/browser/
       
       - name: Upload dist folder for deploy
