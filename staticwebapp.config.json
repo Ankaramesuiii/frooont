@@ -1,4 +1,8 @@
 {
+  "navigationFallback": {
+    "rewrite": "index.html",
+    "exclude": ["/assets/*", "/*.css", "/*.js", "/*.png", "/*.ico"]
+  },
   "globalHeaders": {
     "Access-Control-Allow-Origin": "https://api-budget.azurewebsites.net",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
