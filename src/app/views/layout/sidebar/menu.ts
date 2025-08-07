@@ -15,13 +15,13 @@ export const MENU: MenuItem[] = [
     label: 'Budget',
     link: '/general/budget',
     icon: 'dollar-sign',
-    roles: ['ROLE_SUPER_MANAGER', 'ROLE_MANAGER']
+    roles: ['ROLE_SUPER_MANAGER']
   },
   {
     label: 'Formation',
     link: '/general/formations',
     icon: 'book-open',
-    roles: ['ROLE_SUPER_MANAGER', 'ROLE_MANAGER']
+    roles: ['ROLE_SUPER_MANAGER']
   },
   {
     label: 'Voyage',

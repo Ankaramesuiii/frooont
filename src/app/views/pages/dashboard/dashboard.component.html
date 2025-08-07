@@ -1,8 +1,15 @@
-<div class="full-page-container">
+<div class="full-page-container" *ngIf="reportUrl; else noAccess">
   <iframe
-    title="dash1"
-    src="https://app.powerbi.com/reportEmbed?reportId=bd3cc3ac-d672-4550-92b5-ccb931afd95d&autoAuth=true&ctid=604f1a96-cbe8-43f8-abbf-f8eaf5d85730"
+    #reportFrame
+    [src]="reportUrl | safeUrl"
+    title="Power BI Dashboard"
     frameborder="0"
-    allowFullScreen="true">
-  </iframe>
+    allowFullScreen="true"
+    width="100%"
+    height="800px"
+  ></iframe>
 </div>
+
+<ng-template #noAccess>
+  <p>Vous n'avez pas access.</p>
+</ng-template>

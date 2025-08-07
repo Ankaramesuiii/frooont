@@ -128,7 +128,7 @@ export class BudgetComponent {
       next: (response) => {
         this.isSuccess = true;
         this.msg = 'Les budgets ont été enregistrés avec succès!';
-        this.proceed = 'Voir les formations';
+        this.proceed = 'Continuer vers les formations';
         this.wizardForm.goToNextStep();
       },
       error: (err) => {

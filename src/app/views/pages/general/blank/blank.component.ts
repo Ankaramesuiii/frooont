@@ -109,7 +109,7 @@ export class BlankComponent implements OnInit {
           onComplete();
         }, 1000); // Small delay after "Finalisation"
       }
-    }, 4000); // 5 seconds between messages
+    }, 2000); // 5 seconds between messages
   }
 
   private handleError(message: any) {
