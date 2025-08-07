@@ -12,4 +12,5 @@ export const environment = {
     teamMembersNameUrl: 'https://api-budget.azurewebsites.net/api/user/team-members',
     exchangerateApiKey: 'cur_live_umqer7vKD6LVGydlBhhApzjGahEAG1ZIOWDKGEwV',
     missionUrl: 'https://api-budget.azurewebsites.net/api/missions',
+    hotelUrl: 'https://api-budget.azurewebsites.net/api/hotels',
 };

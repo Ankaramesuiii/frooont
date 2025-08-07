@@ -4,6 +4,7 @@ import { TeamMember } from '../../models/team.member.model';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { environment } from '../../../../envs/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import { AuthService } from '../auth/auth.service';
 export class HotelService {
 
   private nominatimUrl = 'https://nominatim.openstreetmap.org/reverse';
+  private apiUrl = environment.hotelUrl;
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
@@ -51,7 +53,7 @@ export class HotelService {
   }
 
   assignSharedHotel(request: HotelDto): Observable<any> {
-    return this.http.post('/api/hotels', request, {
+    return this.http.post(this.apiUrl, request, {
       headers: this.authService.getHeaders()
     });
   }

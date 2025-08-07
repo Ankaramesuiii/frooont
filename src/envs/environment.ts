@@ -12,4 +12,5 @@ export const environment = {
     teamMembersNameUrl: '/api/user/team-members',
     exchangerateApiKey:'cur_live_umqer7vKD6LVGydlBhhApzjGahEAG1ZIOWDKGEwV',
     missionUrl : '/api/missions',
+    hotelUrl: '/api/hotels',
 };
